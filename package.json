@@ -1,0 +1,24 @@
+{
+  "name": "eazyway",
+  "version": "0.1.0",
+  "description": "Frontend prototype for project Eazyway.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "./node_modules/.bin/beefy src/map.js --browserify ./node_modules/.bin/browserify --live"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jcoupey/eazyway.git"
+  },
+  "author": "jcoupey",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jcoupey/eazyway/issues"
+  },
+  "homepage": "https://github.com/jcoupey/eazyway#readme",
+  "devDependencies": {
+    "beefy": "^2.1.8",
+    "browserify": "^17.0.0"
+  }
+}
