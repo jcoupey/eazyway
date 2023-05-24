@@ -1,5 +1,7 @@
 'use strict';
 
+var osrm = require('./osrm.js')
+
 var start;
 var end;
 
@@ -19,7 +21,7 @@ var setStart = function(map, lngLat) {
     .setLngLat(lngLat)
     .addTo(map);
 
-  start.on('dragend', () => { route(); });
+  start.on('dragend', () => { getRoutes(map); });
 }
 
 var setEnd = function(map, lngLat) {
@@ -30,13 +32,13 @@ var setEnd = function(map, lngLat) {
     .setLngLat(lngLat)
     .addTo(map);
 
-  end.on('dragend', () => { route(); });
+  end.on('dragend', () => { getRoutes(map); });
 
-  route();
+  getRoutes(map);
 }
 
-var route = function() {
-  console.log("route");
+var getRoutes = function(map) {
+  osrm.route(map, [start.getLngLat(), end.getLngLat()]);
 }
 
 module.exports = {
