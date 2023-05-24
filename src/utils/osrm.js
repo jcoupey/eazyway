@@ -33,6 +33,21 @@ var getGeojsonLine = function(route) {
   return data;
 }
 
+var maxAlternatives = 2;
+var routeColors = ['blue', 'grey'];
+
+var cleanRoutes = function(map) {
+  for (var i = 0; i < maxAlternatives; i++) {
+    var name = 'route-' + i.toString();
+    if (map.getLayer(name)) {
+      map.removeLayer(name);
+    }
+    if (map.getSource(name)) {
+      map.removeSource(name);
+    }
+  }
+}
+
 var route = function(map, coords) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -43,26 +58,32 @@ var route = function(map, coords) {
       else{
         var result = JSON.parse(xhttp.response);
 
-        var route = result.routes[0];
+        cleanRoutes(map);
 
-        map.addSource('route', {
-          'type': 'geojson',
-          'data': getGeojsonLine(route)
-        });
+        for (var i = 0; i < Math.min(maxAlternatives, result.routes.length); i++) {
+          var route = result.routes[i];
+          var name = 'route-' + i.toString();
 
-        map.addLayer({
-          'id': 'route',
-          'type': 'line',
-          'source': 'route',
-          'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-          },
-          'paint': {
-            'line-color': 'blue',
-            'line-width': 6
-          }
-        });
+          map.addSource(name, {
+            'type': 'geojson',
+            'data': getGeojsonLine(route)
+          });
+
+          map.addLayer({
+            'id': name,
+            'type': 'line',
+            'source': name,
+            'layout': {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            'paint': {
+              'line-color': routeColors[i],
+              'line-width': 7,
+              'line-opacity': 0.7
+            }
+          });
+        }
       }
     }
   };
