@@ -31,4 +31,4 @@ var map = new maplibregl.Map({
 
 module.exports = {
   map: map
-}
+};

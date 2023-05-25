@@ -11,7 +11,7 @@ var getRouteRequest = function(coords) {
     address += coords[i].lng + ',' + coords[i].lat + ';';
   }
   return address.slice(0, -1) + routeOptions;
-}
+};
 
 var getGeojsonLine = function(route) {
   var latLngs = polyline.decode(route['geometry']);
@@ -24,14 +24,14 @@ var getGeojsonLine = function(route) {
       'coordinates': [
       ]
     }
-  }
+  };
 
   for (var i = 0; i < latLngs.length; i++) {
     data.geometry.coordinates.push([latLngs[i][1], latLngs[i][0]]);
   }
 
   return data;
-}
+};
 
 var maxAlternatives = 2;
 var routeColors = ['blue', 'grey'];
@@ -46,7 +46,7 @@ var cleanRoutes = function(map) {
       map.removeSource(name);
     }
   }
-}
+};
 
 var route = function(map, coords) {
   var xhttp = new XMLHttpRequest();
@@ -107,8 +107,8 @@ var route = function(map, coords) {
 
   xhttp.open('GET', getRouteRequest(coords));
   xhttp.send();
-}
+};
 
 module.exports = {
   route: route
-}
+};
