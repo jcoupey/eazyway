@@ -22,7 +22,7 @@
     "beefy": "^2.1.8",
     "browserify": "^17.0.0",
     "eslint": "^8.41.0",
-    "uglify": "^0.1.5"
+    "uglify-js": "^3.17.4"
   },
   "dependencies": {
     "@mapbox/polyline": "^1.2.0"
