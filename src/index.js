@@ -1,7 +1,7 @@
 'use strict';
 
 var map = require('./config/map.js').map;
-var routing = require('./utils/routing.js')
+var routing = require('./utils/routing.js');
 var poi = require('./static.js');
 
 map.on('click', function(e) {
@@ -96,5 +96,4 @@ map.on('load', function () {
     map.getCanvas().style.cursor = '';
     popup.remove();
   });
-
 });

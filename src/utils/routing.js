@@ -1,17 +1,17 @@
 'use strict';
 
-var osrm = require('./osrm.js')
+var osrm = require('./osrm.js');
 
 var start;
 var end;
 
 var hasStart = function() {
   return start != undefined;
-}
+};
 
 var hasEnd = function() {
   return end != undefined;
-}
+};
 
 var setStart = function(map, lngLat) {
   start = new maplibregl.Marker({
@@ -22,7 +22,7 @@ var setStart = function(map, lngLat) {
     .addTo(map);
 
   start.on('dragend', () => { getRoutes(map); });
-}
+};
 
 var setEnd = function(map, lngLat) {
   end = new maplibregl.Marker({
@@ -35,17 +35,17 @@ var setEnd = function(map, lngLat) {
   end.on('dragend', () => { getRoutes(map); });
 
   getRoutes(map);
-}
+};
 
 var getRoutes = function(map) {
   if (start && end) {
     osrm.route(map, [start.getLngLat(), end.getLngLat()]);
   }
-}
+};
 
 module.exports = {
   hasStart: hasStart,
   hasEnd: hasEnd,
   setStart: setStart,
   setEnd: setEnd
-}
+};
