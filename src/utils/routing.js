@@ -38,7 +38,9 @@ var setEnd = function(map, lngLat) {
 }
 
 var getRoutes = function(map) {
-  osrm.route(map, [start.getLngLat(), end.getLngLat()]);
+  if (start && end) {
+    osrm.route(map, [start.getLngLat(), end.getLngLat()]);
+  }
 }
 
 module.exports = {
