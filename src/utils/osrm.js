@@ -60,14 +60,27 @@ var route = function(map, coords) {
 
         cleanRoutes(map);
 
+        var s = coords[0];
+        var e = coords[1];
+        var routeBounds = new maplibregl.LngLatBounds(
+          [Math.min(s.lng, e.lng), Math.min(s.lat, e.lat)],
+          [Math.max(s.lng, e.lng), Math.max(s.lat, e.lat)]
+        );
+
         for (var i = 0; i < Math.min(maxAlternatives, result.routes.length); i++) {
           var route = result.routes[i];
           var name = 'route-' + i.toString();
 
+          var geojsonLine = getGeojsonLine(route);
           map.addSource(name, {
             'type': 'geojson',
-            'data': getGeojsonLine(route)
+            'data': geojsonLine
           });
+
+          var coordinates = geojsonLine.geometry.coordinates;
+          routeBounds = coordinates.reduce(function (bounds, coord) {
+            return bounds.extend(coord);
+          }, routeBounds);
 
           map.addLayer({
             'id': name,
@@ -84,6 +97,10 @@ var route = function(map, coords) {
             }
           });
         }
+
+        map.fitBounds(routeBounds, {
+          padding: 20
+        });
       }
     }
   };
