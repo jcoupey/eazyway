@@ -2,6 +2,8 @@
 
 var polyline = require('@mapbox/polyline');
 
+var images = require('./images.js');
+
 var routeOptions = '?alternatives=true&overview=full';
 
 var getRouteRequest = function(coords) {
@@ -96,6 +98,10 @@ var route = function(map, coords) {
               'line-opacity': 0.7
             }
           });
+
+          if (i === 0) {
+            images.plotAround(map, geojsonLine);
+          }
         }
 
         map.fitBounds(routeBounds, {
