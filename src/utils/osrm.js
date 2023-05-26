@@ -94,8 +94,8 @@ var route = function(map, coords) {
             },
             'paint': {
               'line-color': routeColors[i],
-              'line-width': 7,
-              'line-opacity': 0.7
+              'line-width': 11,
+              'line-opacity': 0.65
             }
           });
 

@@ -37,7 +37,7 @@ var plotAround = function(map, geojsonLine) {
     'type': 'circle',
     'source': 'mapillary-images',
     'paint': {
-      'circle-radius': 5,
+      'circle-radius': 4,
       'circle-color': 'violet',
       'circle-opacity': 0.8
     },
