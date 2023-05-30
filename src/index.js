@@ -26,6 +26,9 @@ map.on('load', function () {
     'type': 'circle',
     'source': 'stadium',
     'paint': {
+      'circle-stroke-color': 'black',
+      'circle-stroke-width': 1,
+      'circle-stroke-opacity': 1,
       'circle-radius': 10,
       'circle-color': 'red',
       'circle-opacity': 0.7
@@ -68,6 +71,9 @@ map.on('load', function () {
     'type': 'circle',
     'source': 'hotels',
     'paint': {
+      'circle-stroke-color': 'black',
+      'circle-stroke-width': 1,
+      'circle-stroke-opacity': 1,
       'circle-radius': 8,
       'circle-color': 'green',
       'circle-opacity': 0.7
