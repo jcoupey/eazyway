@@ -58,10 +58,6 @@ var init = function(map) {
 }
 
 var setCurrentImage = function(id) {
-  var container = document.getElementById("mjs");
-  container.style.width = "400px";
-  container.style.height = "400px";
-
   mjs.moveTo(id);
 }
 
