@@ -2,6 +2,7 @@
 
 var map = require('./config/map.js').map;
 var routing = require('./utils/routing.js');
+var viewer = require('./utils/viewer.js');
 var poi = require('./static.js');
 
 map.on('click', function(e) {
@@ -97,3 +98,22 @@ map.on('load', function () {
     popup.remove();
   });
 });
+
+class MapillaryControl {
+  onAdd(map) {
+    this._map = map;
+    this._container = document.createElement('div');
+    this._container.id = 'mjs';
+    this._container.className = 'maplibregl-ctrl';
+    return this._container;
+  }
+
+  onRemove() {
+    this._container.parentNode.removeChild(this._container);
+    this._map = undefined;
+  }
+};
+
+map.addControl(new MapillaryControl());
+
+viewer.init();
