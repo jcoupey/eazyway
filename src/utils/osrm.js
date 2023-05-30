@@ -100,7 +100,7 @@ var route = function(map, start, end) {
           });
 
           if (i === 0) {
-            images.plotAround(map, geojsonLine);
+            images.plotAround(map, geojsonLine, start);
           }
         }
 

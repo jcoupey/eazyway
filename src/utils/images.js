@@ -16,15 +16,24 @@ var resetImagesLayer = function(map) {
 
 var imageIds = [];
 
-var plotAround = function(map, geojsonLine) {
+var plotAround = function(map, geojsonLine, start) {
   var buffer = turf.buffer(geojsonLine, 0.005);
 
   imageIds.length = 0;
+  var startImage;
+  var smallestStartDistance = Infinity;
+
   for (var i = 0; i < images.features.length; i++) {
     var f = images.features[i];
     if (turf.booleanPointInPolygon(f.geometry.coordinates, buffer)) {
       f.properties.show = true;
       imageIds.push(f.properties.id);
+      var startDistance = turf.distance([start.lng, start.lat],
+                                        f.geometry.coordinates, {units: 'kilometers'});
+      if (startDistance < smallestStartDistance) {
+        startImage = f.properties.id;
+        smallestStartDistance = startDistance;
+      }
     } else {
       delete f.properties.show;
     }
@@ -50,7 +59,7 @@ var plotAround = function(map, geojsonLine) {
   });
 
   if (imageIds.length > 0) {
-    viewer.setCurrentImage(imageIds[0]);
+    viewer.setCurrentImage(startImage);
   }
 }
 
