@@ -52,10 +52,12 @@ var plotAround = function(map, geojsonLine, start) {
     'source': 'mapillary-images',
     'paint': {
       'circle-color': 'violet',
-      'circle-opacity': 0.8
+      'circle-opacity': 1
     },
     'filter': ['has', 'show']
   });
+
+  map.moveLayer('mapillary-images');
 
   map.on('mouseenter', 'mapillary-images', function () {
     map.getCanvas().style.cursor = 'pointer';

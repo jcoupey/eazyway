@@ -101,6 +101,8 @@ var route = function(map, start, end) {
 
           if (i === 0) {
             images.plotAround(map, geojsonLine, start);
+          } else {
+            map.moveLayer(name, 'route-0');
           }
         }
 
