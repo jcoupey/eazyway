@@ -6,13 +6,15 @@ var images = require('./images.js');
 
 var routeOptions = '?alternatives=true&overview=full';
 
-var getRouteRequest = function(coords) {
+var getRouteRequest = function(start, end) {
   var address = 'https://eazyway.verso-optim.com/route/v1/driving/';
 
-  for (var i = 0; i < coords.length; i++) {
-    address += coords[i].lng + ',' + coords[i].lat + ';';
-  }
-  return address.slice(0, -1) + routeOptions;
+  address += start.lng + ',' + start.lat + ';';
+  address += end.lng + ',' + end.lat;
+
+  address += routeOptions;
+
+  return address;
 };
 
 var getGeojsonLine = function(route) {
@@ -50,7 +52,7 @@ var cleanRoutes = function(map) {
   }
 };
 
-var route = function(map, coords) {
+var route = function(map, start, end) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4) {
@@ -62,11 +64,9 @@ var route = function(map, coords) {
 
         cleanRoutes(map);
 
-        var s = coords[0];
-        var e = coords[1];
         var routeBounds = new maplibregl.LngLatBounds(
-          [Math.min(s.lng, e.lng), Math.min(s.lat, e.lat)],
-          [Math.max(s.lng, e.lng), Math.max(s.lat, e.lat)]
+          [Math.min(start.lng, end.lng), Math.min(start.lat, end.lat)],
+          [Math.max(start.lng, end.lng), Math.max(start.lat, end.lat)]
         );
 
         for (var i = 0; i < Math.min(maxAlternatives, result.routes.length); i++) {
@@ -111,7 +111,7 @@ var route = function(map, coords) {
     }
   };
 
-  xhttp.open('GET', getRouteRequest(coords));
+  xhttp.open('GET', getRouteRequest(start, end));
   xhttp.send();
 };
 
