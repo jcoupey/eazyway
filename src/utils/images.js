@@ -2,9 +2,10 @@
 
 var turf = require('@turf/turf')
 
-var mapillary = require('../../data/mapillary.json');
+var images = require('../../data/mapillary.json');
+var viewer = require('./viewer.js');
 
-var resetImages = function(map) {
+var resetImagesLayer = function(map) {
   if (map.getLayer('mapillary-images')) {
     map.removeLayer('mapillary-images');
   }
@@ -13,23 +14,27 @@ var resetImages = function(map) {
   }
 }
 
+var imageIds = [];
+
 var plotAround = function(map, geojsonLine) {
   var buffer = turf.buffer(geojsonLine, 0.005);
 
-  for (var i = 0; i < mapillary.features.length; i++) {
-    var f = mapillary.features[i];
+  imageIds.length = 0;
+  for (var i = 0; i < images.features.length; i++) {
+    var f = images.features[i];
     if (turf.booleanPointInPolygon(f.geometry.coordinates, buffer)) {
       f.properties.show = true;
+      imageIds.push(f.properties.id);
     } else {
       delete f.properties.show;
     }
   }
 
-  resetImages(map);
+  resetImagesLayer(map);
 
   map.addSource('mapillary-images', {
     'type': 'geojson',
-    'data': mapillary
+    'data': images
   });
 
   map.addLayer({
@@ -43,10 +48,12 @@ var plotAround = function(map, geojsonLine) {
     },
     'filter': ['has', 'show']
   });
-}
 
+  if (imageIds.length > 0) {
+    viewer.setCurrentImage(imageIds[0]);
+  }
+}
 
 module.exports = {
   plotAround: plotAround
 };
-
