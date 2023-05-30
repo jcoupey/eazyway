@@ -57,6 +57,18 @@ var plotAround = function(map, geojsonLine, start) {
     'filter': ['has', 'show']
   });
 
+  map.on('mouseenter', 'mapillary-images', function () {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'mapillary-images', function () {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'mapillary-images', function (e) {
+    viewer.setCurrentImage(e.features[0].properties.id);
+  });
+
   map.setPaintProperty('mapillary-images', 'circle-radius', [
     'interpolate',
     ['linear'],
