@@ -116,4 +116,4 @@ class MapillaryControl {
 
 map.addControl(new MapillaryControl());
 
-viewer.init();
+viewer.init(map);
