@@ -51,12 +51,21 @@ var plotAround = function(map, geojsonLine, start) {
     'type': 'circle',
     'source': 'mapillary-images',
     'paint': {
-      'circle-radius': 4,
       'circle-color': 'violet',
       'circle-opacity': 0.8
     },
     'filter': ['has', 'show']
   });
+
+  map.setPaintProperty('mapillary-images', 'circle-radius', [
+    'interpolate',
+    ['linear'],
+    ['zoom'],
+    15,
+    1,
+    22,
+    12
+  ]);
 
   if (imageIds.length > 0) {
     viewer.setCurrentImage(startImage);
