@@ -52,7 +52,8 @@ var plotAround = function(map, geojsonLine, start) {
     'source': 'mapillary-images',
     'paint': {
       'circle-color': 'violet',
-      'circle-opacity': 1
+      'circle-opacity': 1,
+      'circle-blur': 0.9
     },
     'filter': ['has', 'show']
   });
@@ -71,15 +72,16 @@ var plotAround = function(map, geojsonLine, start) {
     viewer.setCurrentImage(e.features[0].properties.id);
   });
 
-  map.setPaintProperty('mapillary-images', 'circle-radius', [
-    'interpolate',
-    ['linear'],
-    ['zoom'],
-    15,
-    1,
-    22,
-    12
-  ]);
+  map.setPaintProperty('mapillary-images',
+                       'circle-radius', [
+                         'interpolate',
+                         ['linear'],
+                         ['zoom'],
+                         15,
+                         2,
+                         22,
+                         14
+                       ]);
 
   if (imageIds.length > 0) {
     viewer.filterImages(imageIds);
