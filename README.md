@@ -13,6 +13,9 @@ python3 scripts/get_mapillary_data.py access_token organization_id
 
 ### Dev server
 
+Update Mapillary access token in `src/utils/viewer.js` and key for
+vector tile source in `src/config/map.js`.
+
 ```
 npm run start
 ```
