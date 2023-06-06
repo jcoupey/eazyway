@@ -61,7 +61,12 @@ var setCurrentImage = function(id) {
   mjs.moveTo(id);
 }
 
+var filterImages = function(ids) {
+  mjs.setFilter(['in', 'id', ...ids]);
+}
+
 module.exports = {
   init: init,
+  filterImages: filterImages,
   setCurrentImage: setCurrentImage
 };

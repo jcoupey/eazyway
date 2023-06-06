@@ -27,7 +27,7 @@ var plotAround = function(map, geojsonLine, start) {
     var f = images.features[i];
     if (turf.booleanPointInPolygon(f.geometry.coordinates, buffer)) {
       f.properties.show = true;
-      imageIds.push(f.properties.id);
+      imageIds.push(f.properties.id.toString());
       var startDistance = turf.distance([start.lng, start.lat],
                                         f.geometry.coordinates, {units: 'kilometers'});
       if (startDistance < smallestStartDistance) {
@@ -82,6 +82,7 @@ var plotAround = function(map, geojsonLine, start) {
   ]);
 
   if (imageIds.length > 0) {
+    viewer.filterImages(imageIds);
     viewer.setCurrentImage(startImage);
   }
 }
