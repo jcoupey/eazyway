@@ -50,7 +50,7 @@ var init = function(map) {
     component: { cover: false }
   });
 
-  mjs.on("moveend", function() {
+  mjs.on("image", function() {
     mjs.getImage().then(function(img) {
       setMarker(map, img);
     });
