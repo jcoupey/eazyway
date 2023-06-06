@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "./node_modules/.bin/browserify -d src/index.js -o bundle.raw.js && ./node_modules/.bin/uglifyjs bundle.raw.js -c -m -o bundle.js",
-    "dist": "npm run build && rm bundle.raw.js && rm -rf dist && mkdir -p dist/data && mv -v bundle.js dist && cp -v index.html dist && cp -v data/mapillary.json dist/data && sed -i 's|src/index.js|bundle.js|' dist/index.html",
+    "dist": "npm run build && rm bundle.raw.js && rm -rf dist && mkdir dist && mv -v bundle.js dist && cp -v index.html dist && sed -i 's|src/index.js|bundle.js|' dist/index.html",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "./node_modules/.bin/beefy src/index.js --browserify ./node_modules/.bin/browserify --live"
   },
