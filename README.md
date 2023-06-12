@@ -11,6 +11,12 @@ mkdir data
 python3 scripts/get_mapillary_data.py access_token organization_id
 ```
 
+### Fetch obstacles data
+
+```
+python3 scripts/get_obstacles.py URL
+```
+
 ### Dev server
 
 Update Mapillary access token in `src/utils/viewer.js` and key for
