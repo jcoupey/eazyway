@@ -10,13 +10,14 @@
     <link href="https://unpkg.com/mapillary-js@4.1.0/dist/mapillary.css" rel="stylesheet"/>
     <style>
 	    body { margin: 0; padding: 0; }
-	    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
-      #mjs { width: 400px; height: 400px; }
     </style>
   </head>
 
   <body>
-    <div id="map"></div>
+    <div style="display: flex; height: 100vh;">
+      <div id="map" style="flex:3;"></div>
+      <div id="mjs" style="flex:2;"></div>
+    </div>
 
     <script  src="src/index.js"></script>
   </body>
