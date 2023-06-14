@@ -24,10 +24,20 @@ if __name__ == "__main__":
 
     obstacles = [o for o in get_obstacles(obstacles_URL) if bbox_ok(o)]
 
-    internal_obstacle_list = [
-        {"id": o["IDRELEVE"], "location": [o["LONGITUDE"], o["LATITUDE"]]}
-        for o in obstacles
-    ]
+    geojson_obstacles = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [o["LONGITUDE"], o["LATITUDE"]],
+                },
+                "properties": {"id": o["IDRELEVE"]},
+            }
+            for o in obstacles
+        ],
+    }
 
     with open("data/obstacles.json", "w") as out:
-        json.dump(internal_obstacle_list, out)
+        json.dump(geojson_obstacles, out)
