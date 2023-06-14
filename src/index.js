@@ -103,6 +103,11 @@ map.on('load', function () {
     map.getCanvas().style.cursor = '';
     popup.remove();
   });
+
+  map.loadImage('img/danger.png', function(error, image) {
+    if (error) throw error;
+    map.addImage('danger', image);
+  });
 });
 
 viewer.init(map);

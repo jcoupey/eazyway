@@ -34,13 +34,10 @@ var plotAround = function(map, geojsonLine) {
 
   map.addLayer({
     'id': 'obstacles',
-    'type': 'circle',
+    'type': 'symbol',
     'source': 'obstacles',
-    'paint': {
-      'circle-color': 'red',
-      'circle-opacity': 1,
-      'circle-blur': 0.9,
-      'circle-radius': 15
+    'layout': {
+      'icon-image': 'danger'
     },
     'filter': ['has', 'show']
   });
