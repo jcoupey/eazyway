@@ -3,6 +3,7 @@
 var polyline = require('@mapbox/polyline');
 
 var images = require('./images.js');
+var obstacles = require('./obstacles.js');
 
 var routeOptions = '?alternatives=true&overview=full';
 
@@ -101,6 +102,7 @@ var route = function(map, start, end) {
 
           if (i === 0) {
             images.plotAround(map, geojsonLine, start);
+            obstacles.plotAround(map, geojsonLine);
           } else {
             map.moveLayer(name, 'route-0');
           }
