@@ -6,41 +6,11 @@ const ACCESS_TOKEN  = require('../../data/mly_token.json');
 
 var mjs;
 
-var setMarker = function(map, img) {
-  var imgPoint = {
-    'type': 'Feature',
-    'properties': {},
-    'geometry': {
-      'type': 'Point',
-      'coordinates': [img.originalLngLat.lng, img.originalLngLat.lat]
-    }
-  };
+var imageMarker;
 
-  if (!map.getSource('mapillary-marker')) {
-    map.addSource('mapillary-marker', {
-      'type': 'geojson',
-      'data': imgPoint
-    });
-  } else {
-    map.getSource('mapillary-marker').setData(imgPoint);
-  }
-
-  if (!map.getLayer('mapillary-marker')) {
-    map.addLayer({
-      'id': 'mapillary-marker',
-      'type': 'circle',
-      'source': 'mapillary-marker',
-      'paint': {
-        'circle-stroke-color': 'white',
-        'circle-stroke-width': 2,
-        'circle-stroke-opacity': 1,
-        'circle-radius': 8,
-        'circle-color': 'orange',
-        'circle-opacity': 1
-      }
-    });
-  }
-  map.moveLayer('mapillary-marker');
+var updateMarker = function(map, img) {
+  imageMarker.setLngLat([img.originalLngLat.lng, img.originalLngLat.lat]);
+  imageMarker.addTo(map);
 }
 
 var init = function(map) {
@@ -50,9 +20,22 @@ var init = function(map) {
     component: { cover: false }
   });
 
+  const img = document.createElement("img");
+  img.src = 'img/image_marker.svg';
+
+  imageMarker = new maplibregl.Marker({
+    element: img
+  });
+
   mjs.on("image", function() {
     mjs.getImage().then(function(img) {
-      setMarker(map, img);
+      updateMarker(map, img);
+    });
+  });
+
+  mjs.on("bearing", function() {
+    mjs.getBearing().then(function(bearing) {
+      imageMarker.setRotation(bearing);
     });
   });
 }
