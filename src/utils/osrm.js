@@ -77,6 +77,72 @@ var cleanRoutes = function(map) {
   }
 };
 
+var plotRoutes = function(map, start, end, result) {
+  cleanRoutes(map);
+
+  var routeBounds = new maplibregl.LngLatBounds(
+    [Math.min(start.lng, end.lng), Math.min(start.lat, end.lat)],
+    [Math.max(start.lng, end.lng), Math.max(start.lat, end.lat)]
+  );
+
+  var nbRoutes =  Math.min(maxAlternatives, result.routes.length);
+  for (var rev_i = 0; rev_i < nbRoutes; rev_i++) {
+    var i = nbRoutes - rev_i - 1;
+    var route = result.routes[i];
+    var name = 'route-' + i.toString();
+
+    var geojsonLine = getGeojsonLine(route);
+    map.addSource(name, {
+      'type': 'geojson',
+      'data': geojsonLine
+    });
+
+    var coordinates = geojsonLine.geometry.coordinates;
+    routeBounds = coordinates.reduce(function (bounds, coord) {
+      return bounds.extend(coord);
+    }, routeBounds);
+
+    map.addLayer({
+      'id': name + '-outline',
+      'type': 'line',
+      'source': name,
+      'layout': {
+        'line-join': 'round',
+        'line-cap': 'round'
+      },
+      'paint': {
+        'line-color': routeStyle[i].outline.color,
+        'line-width': routeStyle[i].outline.width,
+        'line-opacity': routeStyle[i].outline.opacity
+      }
+    });
+
+    map.addLayer({
+      'id': name,
+      'type': 'line',
+      'source': name,
+      'layout': {
+        'line-join': 'round',
+        'line-cap': 'round'
+      },
+      'paint': {
+        'line-color': routeStyle[i].color,
+        'line-width': routeStyle[i].width,
+        'line-opacity': routeStyle[i].opacity
+      }
+    });
+
+    if (i === 0) {
+      images.plotAround(map, geojsonLine, start);
+      obstacles.plotAround(map, geojsonLine);
+    }
+  }
+
+  map.fitBounds(routeBounds, {
+    padding: 20
+  });
+};
+
 var route = function(map, start, end) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -87,69 +153,7 @@ var route = function(map, start, end) {
       else{
         var result = JSON.parse(xhttp.response);
 
-        cleanRoutes(map);
-
-        var routeBounds = new maplibregl.LngLatBounds(
-          [Math.min(start.lng, end.lng), Math.min(start.lat, end.lat)],
-          [Math.max(start.lng, end.lng), Math.max(start.lat, end.lat)]
-        );
-
-        var nbRoutes =  Math.min(maxAlternatives, result.routes.length);
-        for (var rev_i = 0; rev_i < nbRoutes; rev_i++) {
-          var i = nbRoutes - rev_i - 1;
-          var route = result.routes[i];
-          var name = 'route-' + i.toString();
-
-          var geojsonLine = getGeojsonLine(route);
-          map.addSource(name, {
-            'type': 'geojson',
-            'data': geojsonLine
-          });
-
-          var coordinates = geojsonLine.geometry.coordinates;
-          routeBounds = coordinates.reduce(function (bounds, coord) {
-            return bounds.extend(coord);
-          }, routeBounds);
-
-          map.addLayer({
-            'id': name + '-outline',
-            'type': 'line',
-            'source': name,
-            'layout': {
-              'line-join': 'round',
-              'line-cap': 'round'
-            },
-            'paint': {
-              'line-color': routeStyle[i].outline.color,
-              'line-width': routeStyle[i].outline.width,
-              'line-opacity': routeStyle[i].outline.opacity
-            }
-          });
-
-          map.addLayer({
-            'id': name,
-            'type': 'line',
-            'source': name,
-            'layout': {
-              'line-join': 'round',
-              'line-cap': 'round'
-            },
-            'paint': {
-              'line-color': routeStyle[i].color,
-              'line-width': routeStyle[i].width,
-              'line-opacity': routeStyle[i].opacity
-            }
-          });
-
-          if (i === 0) {
-            images.plotAround(map, geojsonLine, start);
-            obstacles.plotAround(map, geojsonLine);
-          }
-        }
-
-        map.fitBounds(routeBounds, {
-          padding: 20
-        });
+        plotRoutes(map, start, end, result);
       }
     }
   };
