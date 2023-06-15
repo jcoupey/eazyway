@@ -11,10 +11,27 @@ mkdir data
 python3 scripts/get_mapillary_data.py access_token organization_id
 ```
 
+### Fetch obstacles data
+
+```
+python3 scripts/get_obstacles.py URL
+```
+
 ### Dev server
 
-Update Mapillary access token in `src/utils/viewer.js` and key for
-vector tile source in `src/config/map.js`.
+#### Set custom vector tile style
+
+```
+cp your_style.json data/style.json
+```
+
+#### Set Mapillary access token
+
+```
+echo acces_token > data/mly_token.json
+```
+
+#### Run locally
 
 ```
 npm run start

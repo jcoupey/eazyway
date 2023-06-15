@@ -2,7 +2,7 @@
 
 var {Viewer} = mapillary;
 
-var ACCESS_TOKEN = "MLY|XXX";
+const ACCESS_TOKEN  = require('../../data/mly_token.json');
 
 var mjs;
 

@@ -103,23 +103,11 @@ map.on('load', function () {
     map.getCanvas().style.cursor = '';
     popup.remove();
   });
+
+  map.loadImage('img/danger.png', function(error, image) {
+    if (error) throw error;
+    map.addImage('danger', image);
+  });
 });
-
-class MapillaryControl {
-  onAdd(map) {
-    this._map = map;
-    this._container = document.createElement('div');
-    this._container.id = 'mjs';
-    this._container.className = 'maplibregl-ctrl';
-    return this._container;
-  }
-
-  onRemove() {
-    this._container.parentNode.removeChild(this._container);
-    this._map = undefined;
-  }
-};
-
-map.addControl(new MapillaryControl());
 
 viewer.init(map);
