@@ -77,7 +77,9 @@ var cleanRoutes = function(map) {
   }
 };
 
-var plotRoutes = function(map, start, end, result) {
+var routes = [];
+
+var plotRoutes = function(map, start, end) {
   cleanRoutes(map);
 
   var routeBounds = new maplibregl.LngLatBounds(
@@ -85,10 +87,10 @@ var plotRoutes = function(map, start, end, result) {
     [Math.max(start.lng, end.lng), Math.max(start.lat, end.lat)]
   );
 
-  var nbRoutes =  Math.min(maxAlternatives, result.routes.length);
+  var nbRoutes =  Math.min(maxAlternatives, routes.length);
   for (var rev_i = 0; rev_i < nbRoutes; rev_i++) {
     var i = nbRoutes - rev_i - 1;
-    var route = result.routes[i];
+    var route = routes[i];
     var name = 'route-' + i.toString();
 
     var geojsonLine = getGeojsonLine(route);
@@ -151,9 +153,9 @@ var route = function(map, start, end) {
         console.log('Error: ' + xhttp.status);
       }
       else{
-        var result = JSON.parse(xhttp.response);
+        routes = JSON.parse(xhttp.response).routes;
 
-        plotRoutes(map, start, end, result);
+        plotRoutes(map, start, end);
       }
     }
   };
