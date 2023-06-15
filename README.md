@@ -25,9 +25,13 @@ python3 scripts/get_obstacles.py URL
 cp your_style.json data/style.json
 ```
 
-#### Run locally
+#### Set Mapillary access token
 
-Update Mapillary access token in `src/utils/viewer.js`.
+```
+echo acces_token > data/mly_token.json
+```
+
+#### Run locally
 
 ```
 npm run start
