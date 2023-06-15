@@ -38,6 +38,23 @@ var getGeojsonLine = function(route) {
   return data;
 };
 
+var routes = [];
+var distancePopups = [new maplibregl.Popup(), new maplibregl.Popup()];
+
+var displayDistance = function(route) {
+  var distance = route.distance;
+  var distanceStr;
+
+  if (distance < 1000) {
+    distanceStr = Math.round(distance) + ' m';
+  } else {
+    var km = distance / 1000;
+    distanceStr = Math.round((km + Number.EPSILON) * 10) / 10 + ' km';
+  }
+
+  return distanceStr;
+}
+
 var maxAlternatives = 2;
 const routeStyle = [
   {
@@ -74,10 +91,10 @@ var cleanRoutes = function(map) {
     if (map.getSource(name)) {
       map.removeSource(name);
     }
+
+    distancePopups[i].remove();
   }
 };
-
-var routes = [];
 
 var plotRoutes = function(map, start, end) {
   cleanRoutes(map);
@@ -133,6 +150,21 @@ var plotRoutes = function(map, start, end) {
         'line-opacity': routeStyle[i].opacity
       }
     });
+
+    var event = function(i) {
+      return function() {
+        map.on('mouseover', name + '-outline', function (e) {
+          distancePopups[i].setLngLat(e.lngLat)
+            .setHTML(displayDistance(routes[i]))
+            .addTo(map);
+        });
+
+        map.on('mouseout', name + '-outline', function (e) {
+          distancePopups[i].remove();
+        });
+      };
+    };
+    event(i)();
 
     if (i === 0) {
       images.plotAround(map, geojsonLine, start);
