@@ -39,13 +39,37 @@ var getGeojsonLine = function(route) {
 };
 
 var maxAlternatives = 2;
-var routeColors = ['blue', 'grey'];
+const routeStyle = [
+  {
+    color: '#6fa8dc',
+    opacity: 1,
+    width: 6,
+    outline: {
+      color: '#0b5394',
+      opacity: 1,
+      width: 10
+    }
+  },
+  {
+    color: '#efd3b6',
+    opacity: 0.6,
+    width: 6,
+    outline: {
+      color: '#da8021',
+      opacity: 1,
+      width: 10
+    }
+  }
+]
 
 var cleanRoutes = function(map) {
   for (var i = 0; i < maxAlternatives; i++) {
     var name = 'route-' + i.toString();
     if (map.getLayer(name)) {
       map.removeLayer(name);
+    }
+    if (map.getLayer(name + '-outline')) {
+      map.removeLayer(name + '-outline');
     }
     if (map.getSource(name)) {
       map.removeSource(name);
@@ -70,7 +94,9 @@ var route = function(map, start, end) {
           [Math.max(start.lng, end.lng), Math.max(start.lat, end.lat)]
         );
 
-        for (var i = 0; i < Math.min(maxAlternatives, result.routes.length); i++) {
+        var nbRoutes =  Math.min(maxAlternatives, result.routes.length);
+        for (var rev_i = 0; rev_i < nbRoutes; rev_i++) {
+          var i = nbRoutes - rev_i - 1;
           var route = result.routes[i];
           var name = 'route-' + i.toString();
 
@@ -86,6 +112,21 @@ var route = function(map, start, end) {
           }, routeBounds);
 
           map.addLayer({
+            'id': name + '-outline',
+            'type': 'line',
+            'source': name,
+            'layout': {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            'paint': {
+              'line-color': routeStyle[i].outline.color,
+              'line-width': routeStyle[i].outline.width,
+              'line-opacity': routeStyle[i].outline.opacity
+            }
+          });
+
+          map.addLayer({
             'id': name,
             'type': 'line',
             'source': name,
@@ -94,17 +135,15 @@ var route = function(map, start, end) {
               'line-cap': 'round'
             },
             'paint': {
-              'line-color': routeColors[i],
-              'line-width': 11,
-              'line-opacity': 0.65
+              'line-color': routeStyle[i].color,
+              'line-width': routeStyle[i].width,
+              'line-opacity': routeStyle[i].opacity
             }
           });
 
           if (i === 0) {
             images.plotAround(map, geojsonLine, start);
             obstacles.plotAround(map, geojsonLine);
-          } else {
-            map.moveLayer(name, 'route-0');
           }
         }
 
