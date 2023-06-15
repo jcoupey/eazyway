@@ -19,8 +19,15 @@ python3 scripts/get_obstacles.py URL
 
 ### Dev server
 
-Update Mapillary access token in `src/utils/viewer.js` and key for
-vector tile source in `src/config/map.js`.
+#### Set custom vector tile style
+
+```
+cp your_style.json data/style.json
+```
+
+#### Run locally
+
+Update Mapillary access token in `src/utils/viewer.js`.
 
 ```
 npm run start

@@ -1,8 +1,10 @@
 'use strict';
 
+var style = require('../../data/style.json');
+
 var map = new maplibregl.Map({
   container: 'map', // container id
-  style: 'https://vecto.teritorio.xyz/styles/basic/style.json?key=your_key',
+  style: style,
   center: [2.34621, 48.81598], // starting position
   zoom: 13 // starting zoom
 });
