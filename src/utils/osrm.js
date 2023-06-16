@@ -7,6 +7,7 @@ var obstacles = require('./obstacles.js');
 
 var routeOptions = '?alternatives=true&overview=full';
 
+var map;
 var start;
 var end;
 
@@ -41,8 +42,14 @@ var getGeojsonLine = function(route) {
   return data;
 };
 
+var middlePoint = function(geojsonLine) {
+  var coords = geojsonLine.geometry.coordinates;
+
+  return coords[Math.round(coords.length / 2)];
+}
+
 var routes = [];
-var distancePopups = [new maplibregl.Popup(), new maplibregl.Popup()];
+var distancePopup = new maplibregl.Popup();
 
 var displayDistance = function(route) {
   var distance = route.distance;
@@ -58,7 +65,6 @@ var displayDistance = function(route) {
   return distanceStr;
 }
 
-var maxAlternatives = 2;
 const routeStyle = [
   {
     color: '#6fa8dc',
@@ -82,9 +88,12 @@ const routeStyle = [
   }
 ]
 
-var cleanRoutes = function(map) {
-  for (var i = 0; i < maxAlternatives; i++) {
-    var name = 'route-' + i.toString();
+const routeNames = ['main', 'alternate'];
+
+var cleanRoutes = function() {
+  distancePopup.remove();
+
+  routeNames.forEach(name => {
     if (map.getLayer(name)) {
       map.removeLayer(name);
     }
@@ -94,103 +103,100 @@ var cleanRoutes = function(map) {
     if (map.getSource(name)) {
       map.removeSource(name);
     }
-
-    distancePopups[i].remove();
-  }
+  });
 };
 
-var plotRoutes = function(map) {
-  cleanRoutes(map);
+var plotRoute = function(name, geojsonLine, style) {
+  map.addSource(name, {
+    'type': 'geojson',
+    'data': geojsonLine
+  });
+
+  map.addLayer({
+    'id': name + '-outline',
+    'type': 'line',
+    'source': name,
+    'layout': {
+      'line-join': 'round',
+      'line-cap': 'round'
+    },
+    'paint': {
+      'line-color': style.outline.color,
+      'line-width': style.outline.width,
+      'line-opacity': style.outline.opacity
+    }
+  });
+
+  map.addLayer({
+    'id': name,
+    'type': 'line',
+    'source': name,
+    'layout': {
+      'line-join': 'round',
+      'line-cap': 'round'
+    },
+    'paint': {
+      'line-color': style.color,
+      'line-width': style.width,
+      'line-opacity': style.opacity
+    }
+  });
+};
+
+var plotRoutes = function() {
+  cleanRoutes();
 
   var routeBounds = new maplibregl.LngLatBounds(
     [Math.min(start.lng, end.lng), Math.min(start.lat, end.lat)],
     [Math.max(start.lng, end.lng), Math.max(start.lat, end.lat)]
   );
 
-  var nbRoutes =  Math.min(maxAlternatives, routes.length);
-  for (var rev_i = 0; rev_i < nbRoutes; rev_i++) {
-    var i = nbRoutes - rev_i - 1;
-    var route = routes[i];
-    var name = 'route-' + i.toString();
+  var nbRoutes =  Math.min(routes.length, 2);
 
-    var geojsonLine = getGeojsonLine(route);
-    map.addSource(name, {
-      'type': 'geojson',
-      'data': geojsonLine
-    });
+  var geojsonLines = [];
+  for (var i = 0; i < nbRoutes; i++) {
+    var geojsonLine = getGeojsonLine(routes[i]);
 
     var coordinates = geojsonLine.geometry.coordinates;
     routeBounds = coordinates.reduce(function (bounds, coord) {
       return bounds.extend(coord);
     }, routeBounds);
 
-    map.addLayer({
-      'id': name + '-outline',
-      'type': 'line',
-      'source': name,
-      'layout': {
-        'line-join': 'round',
-        'line-cap': 'round'
-      },
-      'paint': {
-        'line-color': routeStyle[i].outline.color,
-        'line-width': routeStyle[i].outline.width,
-        'line-opacity': routeStyle[i].outline.opacity
-      }
-    });
-
-    map.addLayer({
-      'id': name,
-      'type': 'line',
-      'source': name,
-      'layout': {
-        'line-join': 'round',
-        'line-cap': 'round'
-      },
-      'paint': {
-        'line-color': routeStyle[i].color,
-        'line-width': routeStyle[i].width,
-        'line-opacity': routeStyle[i].opacity
-      }
-    });
-
-    var event = function(i) {
-      return function() {
-        map.on('mouseover', name + '-outline', function (e) {
-          distancePopups[i].setLngLat(e.lngLat)
-            .setHTML(displayDistance(routes[i]))
-            .addTo(map);
-        });
-
-        map.on('mouseout', name + '-outline', function (e) {
-          distancePopups[i].remove();
-        });
-      };
-    };
-    event(i)();
-
-    if (i === 0) {
-      images.plotAround(map, geojsonLine, start);
-      obstacles.plotAround(map, geojsonLine);
-    }
+    geojsonLines.push(geojsonLine);
   }
 
-  var alternativeLayer = 'route-1-outline';
-  if (map.getLayer(alternativeLayer)) {
-    map.on('click', alternativeLayer, function(e) {
-      [routes[0], routes[1]] = [routes[1], routes[0]];
-      plotRoutes(map);
-    });
+  if (nbRoutes > 1) {
+    plotRoute('alternate', geojsonLines[1], routeStyle[1]);
   }
+
+  plotRoute('main', geojsonLines[0], routeStyle[0]);
+
+  images.plotAround(map, geojsonLines[0], start);
+  obstacles.plotAround(map, geojsonLines[0]);
+
+  distancePopup
+    .setLngLat(middlePoint(geojsonLines[0]))
+    .setHTML(displayDistance(routes[0]))
+    .addTo(map);
 
   map.fitBounds(routeBounds, {
     padding: 20
   });
 };
 
-var route = function(map, s, e) {
+  // var alternativeLayer = 'route-1-outline';
+  // if (map.getLayer(alternativeLayer)) {
+  //   map.on('click', alternativeLayer, function(e) {
+  //     [routes[0], routes[1]] = [routes[1], routes[0]];
+  //     plotRoutes();
+  //   });
+  // }
+
+var route = function(m, s, e) {
+  map = m;
   start = s;
   end = e;
+
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4) {
@@ -200,7 +206,7 @@ var route = function(map, s, e) {
       else{
         routes = JSON.parse(xhttp.response).routes;
 
-        plotRoutes(map);
+        plotRoutes();
       }
     }
   };
