@@ -12,6 +12,29 @@ var start;
 var end;
 var switchRoutes = false;
 
+const routeStyle = {
+  active: {
+    color: '#6fa8dc',
+    opacity: 1,
+    width: 6,
+    outline: {
+      color: '#0b5394',
+      opacity: 1,
+      width: 10
+    }
+  },
+  alternate: {
+    color: '#efd3b6',
+    opacity: 0.6,
+    width: 6,
+    outline: {
+      color: '#da8021',
+      opacity: 1,
+      width: 10
+    }
+  }
+};
+
 var getRouteRequest = function() {
   var address = 'https://eazyway.verso-optim.com/route/v1/driving/';
 
@@ -43,11 +66,99 @@ var getGeojsonLine = function(route) {
   return data;
 };
 
+var removeLayerAndSource = function(name) {
+  if (map.getLayer(name)) {
+    map.removeLayer(name);
+  }
+  if (map.getSource(name)) {
+    map.removeSource(name);
+  }
+};
+
+var showStart = function() {
+  removeLayerAndSource('start');
+
+  var snapped = geojsonLines[0].geometry.coordinates[0];
+
+  var startLine = {
+    'type': 'Feature',
+    'properties': {},
+    'geometry': {
+      'type': 'LineString',
+      'coordinates': [
+        [start.lng, start.lat],
+        snapped
+      ]
+    }
+  };
+
+  map.addSource('start', {
+    'type': 'geojson',
+    'data': startLine
+  });
+
+  map.addLayer({
+    'id': 'start',
+    'type': 'line',
+    'source': 'start',
+    'layout': {
+      'line-join': 'round',
+      'line-cap': 'round'
+    },
+    'paint': {
+      'line-color': routeStyle.active.color,
+      'line-width': 5,
+      'line-opacity': 1,
+      'line-dasharray': [1, 2]
+    }
+  });
+};
+
+var showEnd = function() {
+  removeLayerAndSource('end');
+
+  var routeCoords = geojsonLines[0].geometry.coordinates;
+  var snapped = routeCoords[routeCoords.length - 1];
+
+  var endLine = {
+    'type': 'Feature',
+    'properties': {},
+    'geometry': {
+      'type': 'LineString',
+      'coordinates': [
+        snapped,
+        [end.lng, end.lat],
+      ]
+    }
+  };
+
+  map.addSource('end', {
+    'type': 'geojson',
+    'data': endLine
+  });
+
+  map.addLayer({
+    'id': 'end',
+    'type': 'line',
+    'source': 'end',
+    'layout': {
+      'line-join': 'round',
+      'line-cap': 'round'
+    },
+    'paint': {
+      'line-color': routeStyle.active.color,
+      'line-width': 5,
+      'line-opacity': 1,
+      'line-dasharray': [1, 2]
+    }
+  });
+};
+
 var middlePoint = function(geojsonLine) {
   var coords = geojsonLine.geometry.coordinates;
 
   return coords[Math.round(coords.length / 2)];
-}
+};
 
 var routes = [];
 var geojsonLines = [];
@@ -66,30 +177,7 @@ var displayDistance = function(route) {
   }
 
   return distanceStr;
-}
-
-const routeStyle = {
-  active: {
-    color: '#6fa8dc',
-    opacity: 1,
-    width: 6,
-    outline: {
-      color: '#0b5394',
-      opacity: 1,
-      width: 10
-    }
-  },
-  alternate: {
-    color: '#efd3b6',
-    opacity: 0.6,
-    width: 6,
-    outline: {
-      color: '#da8021',
-      opacity: 1,
-      width: 10
-    }
-  }
-}
+};
 
 const routeNames = ['active', 'alternate'];
 
@@ -171,9 +259,6 @@ var plotRoutes = function() {
             geojsonLines[activeIndex],
             routeStyle.active);
 
-  images.plotAround(map, geojsonLines[activeIndex], start);
-  obstacles.plotAround(map, geojsonLines[activeIndex]);
-
   distancePopup = new maplibregl.Popup()
     .setLngLat(middlePoint(geojsonLines[activeIndex]))
     .setHTML(displayDistance(routes[activeIndex]))
@@ -182,6 +267,9 @@ var plotRoutes = function() {
   map.fitBounds(routeBounds, {
     padding: 20
   });
+
+  images.plotAround(map, geojsonLines[activeIndex], start);
+  obstacles.plotAround(map, geojsonLines[activeIndex]);
 };
 
 var route = function(m, s, e) {
@@ -219,6 +307,9 @@ var route = function(m, s, e) {
         }
 
         plotRoutes();
+
+        showStart();
+        showEnd();
       }
     }
   };
