@@ -7,7 +7,10 @@ var obstacles = require('./obstacles.js');
 
 var routeOptions = '?alternatives=true&overview=full';
 
-var getRouteRequest = function(start, end) {
+var start;
+var end;
+
+var getRouteRequest = function() {
   var address = 'https://eazyway.verso-optim.com/route/v1/driving/';
 
   address += start.lng + ',' + start.lat + ';';
@@ -96,7 +99,7 @@ var cleanRoutes = function(map) {
   }
 };
 
-var plotRoutes = function(map, start, end) {
+var plotRoutes = function(map) {
   cleanRoutes(map);
 
   var routeBounds = new maplibregl.LngLatBounds(
@@ -172,12 +175,22 @@ var plotRoutes = function(map, start, end) {
     }
   }
 
+  var alternativeLayer = 'route-1-outline';
+  if (map.getLayer(alternativeLayer)) {
+    map.on('click', alternativeLayer, function(e) {
+      [routes[0], routes[1]] = [routes[1], routes[0]];
+      plotRoutes(map);
+    });
+  }
+
   map.fitBounds(routeBounds, {
     padding: 20
   });
 };
 
-var route = function(map, start, end) {
+var route = function(map, s, e) {
+  start = s;
+  end = e;
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4) {
@@ -187,12 +200,12 @@ var route = function(map, start, end) {
       else{
         routes = JSON.parse(xhttp.response).routes;
 
-        plotRoutes(map, start, end);
+        plotRoutes(map);
       }
     }
   };
 
-  xhttp.open('GET', getRouteRequest(start, end));
+  xhttp.open('GET', getRouteRequest());
   xhttp.send();
 };
 
