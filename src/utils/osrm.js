@@ -52,7 +52,7 @@ var middlePoint = function(geojsonLine) {
 var routes = [];
 var geojsonLines = [];
 var routeBounds;
-var distancePopup = new maplibregl.Popup();
+var distancePopup;
 
 var displayDistance = function(route) {
   var distance = route.distance;
@@ -174,7 +174,7 @@ var plotRoutes = function() {
   images.plotAround(map, geojsonLines[activeIndex], start);
   obstacles.plotAround(map, geojsonLines[activeIndex]);
 
-  distancePopup
+  distancePopup = new maplibregl.Popup()
     .setLngLat(middlePoint(geojsonLines[activeIndex]))
     .setHTML(displayDistance(routes[activeIndex]))
     .addTo(map);
