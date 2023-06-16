@@ -10,6 +10,7 @@ var routeOptions = '?alternatives=true&overview=full';
 var map;
 var start;
 var end;
+var switchRoutes = false;
 
 var getRouteRequest = function() {
   var address = 'https://eazyway.verso-optim.com/route/v1/driving/';
@@ -65,8 +66,8 @@ var displayDistance = function(route) {
   return distanceStr;
 }
 
-const routeStyle = [
-  {
+const routeStyle = {
+  active: {
     color: '#6fa8dc',
     opacity: 1,
     width: 6,
@@ -76,7 +77,7 @@ const routeStyle = [
       width: 10
     }
   },
-  {
+  alternate: {
     color: '#efd3b6',
     opacity: 0.6,
     width: 6,
@@ -86,9 +87,9 @@ const routeStyle = [
       width: 10
     }
   }
-]
+}
 
-const routeNames = ['main', 'alternate'];
+const routeNames = ['active', 'alternate'];
 
 var cleanRoutes = function() {
   distancePopup.remove();
@@ -165,32 +166,42 @@ var plotRoutes = function() {
     geojsonLines.push(geojsonLine);
   }
 
-  if (nbRoutes > 1) {
-    plotRoute('alternate', geojsonLines[1], routeStyle[1]);
+  var activeIndex = 0;
+  var alternateIndex = 1;
+  var hasAlternate = (nbRoutes == 2);
+
+  if (hasAlternate && switchRoutes) {
+    activeIndex = 1;
+    alternateIndex = 0;
   }
 
-  plotRoute('main', geojsonLines[0], routeStyle[0]);
+  if (hasAlternate) {
+    plotRoute('alternate',
+              geojsonLines[alternateIndex],
+              routeStyle.alternate);
 
-  images.plotAround(map, geojsonLines[0], start);
-  obstacles.plotAround(map, geojsonLines[0]);
+    map.on('click', 'alternate-outline', function(e) {
+      switchRoutes = !switchRoutes;
+      plotRoutes();
+    });
+  }
+
+  plotRoute('active',
+            geojsonLines[activeIndex],
+            routeStyle.active);
+
+  images.plotAround(map, geojsonLines[activeIndex], start);
+  obstacles.plotAround(map, geojsonLines[activeIndex]);
 
   distancePopup
-    .setLngLat(middlePoint(geojsonLines[0]))
-    .setHTML(displayDistance(routes[0]))
+    .setLngLat(middlePoint(geojsonLines[activeIndex]))
+    .setHTML(displayDistance(routes[activeIndex]))
     .addTo(map);
 
   map.fitBounds(routeBounds, {
     padding: 20
   });
 };
-
-  // var alternativeLayer = 'route-1-outline';
-  // if (map.getLayer(alternativeLayer)) {
-  //   map.on('click', alternativeLayer, function(e) {
-  //     [routes[0], routes[1]] = [routes[1], routes[0]];
-  //     plotRoutes();
-  //   });
-  // }
 
 var route = function(m, s, e) {
   map = m;
