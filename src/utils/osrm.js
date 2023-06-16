@@ -50,6 +50,8 @@ var middlePoint = function(geojsonLine) {
 }
 
 var routes = [];
+var geojsonLines = [];
+var routeBounds;
 var distancePopup = new maplibregl.Popup();
 
 var displayDistance = function(route) {
@@ -92,8 +94,6 @@ const routeStyle = {
 const routeNames = ['active', 'alternate'];
 
 var cleanRoutes = function() {
-  distancePopup.remove();
-
   routeNames.forEach(name => {
     if (map.getLayer(name)) {
       map.removeLayer(name);
@@ -147,28 +147,9 @@ var plotRoute = function(name, geojsonLine, style) {
 var plotRoutes = function() {
   cleanRoutes();
 
-  var routeBounds = new maplibregl.LngLatBounds(
-    [Math.min(start.lng, end.lng), Math.min(start.lat, end.lat)],
-    [Math.max(start.lng, end.lng), Math.max(start.lat, end.lat)]
-  );
-
-  var nbRoutes =  Math.min(routes.length, 2);
-
-  var geojsonLines = [];
-  for (var i = 0; i < nbRoutes; i++) {
-    var geojsonLine = getGeojsonLine(routes[i]);
-
-    var coordinates = geojsonLine.geometry.coordinates;
-    routeBounds = coordinates.reduce(function (bounds, coord) {
-      return bounds.extend(coord);
-    }, routeBounds);
-
-    geojsonLines.push(geojsonLine);
-  }
-
   var activeIndex = 0;
   var alternateIndex = 1;
-  var hasAlternate = (nbRoutes == 2);
+  var hasAlternate = (routes.length == 2);
 
   if (hasAlternate && switchRoutes) {
     activeIndex = 1;
@@ -216,6 +197,26 @@ var route = function(m, s, e) {
       }
       else{
         routes = JSON.parse(xhttp.response).routes;
+
+        routeBounds = new maplibregl.LngLatBounds(
+          [Math.min(start.lng, end.lng), Math.min(start.lat, end.lat)],
+          [Math.max(start.lng, end.lng), Math.max(start.lat, end.lat)]
+        );
+
+        var nbRoutes =  Math.min(routes.length, 2);
+
+        geojsonLines = [];
+
+        for (var i = 0; i < nbRoutes; i++) {
+          var geojsonLine = getGeojsonLine(routes[i]);
+
+          var coordinates = geojsonLine.geometry.coordinates;
+          routeBounds = coordinates.reduce(function (bounds, coord) {
+            return bounds.extend(coord);
+          }, routeBounds);
+
+          geojsonLines.push(geojsonLine);
+        }
 
         plotRoutes();
       }
