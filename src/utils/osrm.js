@@ -254,6 +254,9 @@ var plotRoutes = function() {
               routeStyle.alternate);
 
     map.on('click', 'alternate-outline', function(e) {
+      if (e.originalEvent.cancelBubble) {
+        return;
+      }
       switchRoutes = !switchRoutes;
       plotRoutes();
       showContext();

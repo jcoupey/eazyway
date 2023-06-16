@@ -69,6 +69,7 @@ var plotAround = function(map, geojsonLine, start) {
   });
 
   map.on('click', 'mapillary-images', function (e) {
+    e.originalEvent.cancelBubble = true;
     viewer.setCurrentImage(e.features[0].properties.id);
   });
 
