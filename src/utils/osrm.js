@@ -252,15 +252,6 @@ var plotRoutes = function() {
     plotRoute('alternate',
               geojsonLines[alternateIndex],
               routeStyle.alternate);
-
-    map.on('click', 'alternate-outline', function(e) {
-      if (e.originalEvent.cancelBubble) {
-        return;
-      }
-      switchRoutes = !switchRoutes;
-      plotRoutes();
-      showContext();
-    });
   }
 
   plotRoute('active',
@@ -275,15 +266,33 @@ var plotRoutes = function() {
   map.fitBounds(routeBounds, {
     padding: 20
   });
-};
-
-var showContext = function() {
-  var activeIndex = 0;
-  if ((routes.length == 2) && switchRoutes) {
-    activeIndex = 1;
-  }
 
   images.plotAround(map, geojsonLines[activeIndex], start);
+
+  map.on('click', 'active', function(e) {
+    if(!e.originalEvent.defaultPrevented) {
+      e.originalEvent.preventDefault();
+    }
+  });
+
+  map.on('click', 'active-outline', function(e) {
+    if(!e.originalEvent.defaultPrevented) {
+      e.originalEvent.preventDefault();
+    }
+  });
+
+  if (hasAlternate) {
+    map.on('click', 'alternate-outline', function(e) {
+      if(!e.originalEvent.defaultPrevented) {
+        e.originalEvent.preventDefault();
+        e.originalEvent.stopPropagation();
+
+        switchRoutes = !switchRoutes;
+        plotRoutes();
+      }
+    });
+  }
+
   obstacles.plotAround(map, geojsonLines[activeIndex]);
 };
 
@@ -325,8 +334,6 @@ var route = function(m, s, e) {
 
         showStart();
         showEnd();
-
-        showContext();
       }
     }
   };
