@@ -182,6 +182,10 @@ var displayDistance = function(route) {
 const routeNames = ['active', 'alternate'];
 
 var cleanRoutes = function() {
+  if (distancePopup) {
+    distancePopup.remove();
+  }
+
   routeNames.forEach(name => {
     if (map.getLayer(name)) {
       map.removeLayer(name);
@@ -252,6 +256,7 @@ var plotRoutes = function() {
     map.on('click', 'alternate-outline', function(e) {
       switchRoutes = !switchRoutes;
       plotRoutes();
+      showContext();
     });
   }
 
@@ -267,6 +272,13 @@ var plotRoutes = function() {
   map.fitBounds(routeBounds, {
     padding: 20
   });
+};
+
+var showContext = function() {
+  var activeIndex = 0;
+  if ((routes.length == 2) && switchRoutes) {
+    activeIndex = 1;
+  }
 
   images.plotAround(map, geojsonLines[activeIndex], start);
   obstacles.plotAround(map, geojsonLines[activeIndex]);
@@ -310,6 +322,8 @@ var route = function(m, s, e) {
 
         showStart();
         showEnd();
+
+        showContext();
       }
     }
   };
