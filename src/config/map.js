@@ -9,6 +9,8 @@ var map = new maplibregl.Map({
   zoom: 13 // starting zoom
 });
 
+map.addControl(new maplibregl.NavigationControl());
+
 module.exports = {
   map: map
 };
