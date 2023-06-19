@@ -27,7 +27,7 @@ var setStart = function(map, lngLat) {
 var setEnd = function(map, lngLat) {
   end = new maplibregl.Marker({
     draggable: true,
-    color: 'red'
+    color: '#d02601'
   })
     .setLngLat(lngLat)
     .addTo(map);

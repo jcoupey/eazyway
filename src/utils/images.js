@@ -69,7 +69,10 @@ var plotAround = function(map, geojsonLine, start) {
   });
 
   map.on('click', 'mapillary-images', function (e) {
-    viewer.setCurrentImage(e.features[0].properties.id);
+    if(!e.originalEvent.defaultPrevented) {
+      e.originalEvent.preventDefault();
+      viewer.setCurrentImage(e.features[0].properties.id);
+    }
   });
 
   map.setPaintProperty('mapillary-images',

@@ -13,6 +13,11 @@ var resetObstaclesLayer = function(map) {
   }
 }
 
+var popup = new maplibregl.Popup({
+closeButton: false,
+closeOnClick: false
+});
+
 var plotAround = function(map, geojsonLine) {
   var buffer = turf.buffer(geojsonLine, 0.005);
 
@@ -43,9 +48,7 @@ var plotAround = function(map, geojsonLine) {
     'filter': ['has', 'show']
   });
 
-  map.moveLayer('obstacles');
-
-  map.on('click', 'obstacles', function (e) {
+  map.on('mouseenter', 'obstacles', function (e) {
     var coordinates = e.features[0].geometry.coordinates.slice();
     var description = e.features[0].properties.id;
 
@@ -56,18 +59,13 @@ var plotAround = function(map, geojsonLine) {
       coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
 
-    new maplibregl.Popup()
-      .setLngLat(coordinates)
+    popup.setLngLat(coordinates)
       .setHTML(description)
       .addTo(map);
   });
 
-  map.on('mouseenter', 'obstacles', function () {
-    map.getCanvas().style.cursor = 'pointer';
-  });
-
   map.on('mouseleave', 'obstacles', function () {
-    map.getCanvas().style.cursor = '';
+    popup.remove();
   });
 }
 

@@ -7,7 +7,35 @@ var obstacles = require('./obstacles.js');
 
 var routeOptions = '?alternatives=true&overview=full';
 
-var getRouteRequest = function(start, end) {
+var map;
+var start;
+var end;
+var switchRoutes = false;
+
+const routeStyle = {
+  active: {
+    color: '#6fa8dc',
+    opacity: 1,
+    width: 6,
+    outline: {
+      color: '#0b5394',
+      opacity: 1,
+      width: 10
+    }
+  },
+  alternate: {
+    color: '#efd3b6',
+    opacity: 0.6,
+    width: 6,
+    outline: {
+      color: '#da8021',
+      opacity: 1,
+      width: 10
+    }
+  }
+};
+
+var getRouteRequest = function() {
   var address = 'https://eazyway.verso-optim.com/route/v1/driving/';
 
   address += start.lng + ',' + start.lat + ';';
@@ -38,22 +66,249 @@ var getGeojsonLine = function(route) {
   return data;
 };
 
-var maxAlternatives = 2;
-var routeColors = ['blue', 'grey'];
+var removeLayerAndSource = function(name) {
+  if (map.getLayer(name)) {
+    map.removeLayer(name);
+  }
+  if (map.getSource(name)) {
+    map.removeSource(name);
+  }
+};
 
-var cleanRoutes = function(map) {
-  for (var i = 0; i < maxAlternatives; i++) {
-    var name = 'route-' + i.toString();
+var showStart = function() {
+  removeLayerAndSource('start');
+
+  var snapped = geojsonLines[0].geometry.coordinates[0];
+
+  var startLine = {
+    'type': 'Feature',
+    'properties': {},
+    'geometry': {
+      'type': 'LineString',
+      'coordinates': [
+        [start.lng, start.lat],
+        snapped
+      ]
+    }
+  };
+
+  map.addSource('start', {
+    'type': 'geojson',
+    'data': startLine
+  });
+
+  map.addLayer({
+    'id': 'start',
+    'type': 'line',
+    'source': 'start',
+    'layout': {
+      'line-join': 'round',
+      'line-cap': 'round'
+    },
+    'paint': {
+      'line-color': routeStyle.active.color,
+      'line-width': 5,
+      'line-opacity': 1,
+      'line-dasharray': [1, 2]
+    }
+  });
+};
+
+var showEnd = function() {
+  removeLayerAndSource('end');
+
+  var routeCoords = geojsonLines[0].geometry.coordinates;
+  var snapped = routeCoords[routeCoords.length - 1];
+
+  var endLine = {
+    'type': 'Feature',
+    'properties': {},
+    'geometry': {
+      'type': 'LineString',
+      'coordinates': [
+        snapped,
+        [end.lng, end.lat],
+      ]
+    }
+  };
+
+  map.addSource('end', {
+    'type': 'geojson',
+    'data': endLine
+  });
+
+  map.addLayer({
+    'id': 'end',
+    'type': 'line',
+    'source': 'end',
+    'layout': {
+      'line-join': 'round',
+      'line-cap': 'round'
+    },
+    'paint': {
+      'line-color': routeStyle.active.color,
+      'line-width': 5,
+      'line-opacity': 1,
+      'line-dasharray': [1, 2]
+    }
+  });
+};
+
+var middlePoint = function(geojsonLine) {
+  var coords = geojsonLine.geometry.coordinates;
+
+  return coords[Math.round(coords.length / 2)];
+};
+
+var routes = [];
+var geojsonLines = [];
+var routeBounds;
+var distancePopup;
+
+var displayDistance = function(route) {
+  var distance = route.distance;
+  var distanceStr;
+
+  if (distance < 1000) {
+    distanceStr = Math.round(distance) + ' m';
+  } else {
+    var km = distance / 1000;
+    distanceStr = Math.round((km + Number.EPSILON) * 10) / 10 + ' km';
+  }
+
+  return distanceStr;
+};
+
+const routeNames = ['active', 'alternate'];
+
+var cleanRoutes = function() {
+  if (distancePopup) {
+    distancePopup.remove();
+  }
+
+  routeNames.forEach(name => {
     if (map.getLayer(name)) {
       map.removeLayer(name);
+    }
+    if (map.getLayer(name + '-outline')) {
+      map.removeLayer(name + '-outline');
     }
     if (map.getSource(name)) {
       map.removeSource(name);
     }
-  }
+  });
 };
 
-var route = function(map, start, end) {
+var plotRoute = function(name, geojsonLine, style) {
+  map.addSource(name, {
+    'type': 'geojson',
+    'data': geojsonLine
+  });
+
+  map.addLayer({
+    'id': name + '-outline',
+    'type': 'line',
+    'source': name,
+    'layout': {
+      'line-join': 'round',
+      'line-cap': 'round'
+    },
+    'paint': {
+      'line-color': style.outline.color,
+      'line-width': style.outline.width,
+      'line-opacity': style.outline.opacity
+    }
+  });
+
+  map.addLayer({
+    'id': name,
+    'type': 'line',
+    'source': name,
+    'layout': {
+      'line-join': 'round',
+      'line-cap': 'round'
+    },
+    'paint': {
+      'line-color': style.color,
+      'line-width': style.width,
+      'line-opacity': style.opacity
+    }
+  });
+};
+
+var plotRoutes = function() {
+  cleanRoutes();
+
+  var activeIndex = 0;
+  var alternateIndex = 1;
+  var hasAlternate = (routes.length == 2);
+
+  if (hasAlternate && switchRoutes) {
+    activeIndex = 1;
+    alternateIndex = 0;
+  }
+
+  if (hasAlternate) {
+    plotRoute('alternate',
+              geojsonLines[alternateIndex],
+              routeStyle.alternate);
+  }
+
+  plotRoute('active',
+            geojsonLines[activeIndex],
+            routeStyle.active);
+
+  distancePopup = new maplibregl.Popup()
+    .setLngLat(middlePoint(geojsonLines[activeIndex]))
+    .setHTML(displayDistance(routes[activeIndex]))
+    .addTo(map);
+
+  map.fitBounds(routeBounds, {
+    padding: 20
+  });
+
+  images.plotAround(map, geojsonLines[activeIndex], start);
+
+  map.on('click', 'active', function(e) {
+    if(!e.originalEvent.defaultPrevented) {
+      e.originalEvent.preventDefault();
+    }
+  });
+
+  map.on('click', 'active-outline', function(e) {
+    if(!e.originalEvent.defaultPrevented) {
+      e.originalEvent.preventDefault();
+    }
+  });
+
+  if (hasAlternate) {
+    map.on('click', 'alternate-outline', function(e) {
+      if(!e.originalEvent.defaultPrevented) {
+        e.originalEvent.preventDefault();
+        e.originalEvent.stopPropagation();
+
+        switchRoutes = !switchRoutes;
+        plotRoutes();
+      }
+    });
+
+    map.on('mouseenter', 'alternate-outline', function () {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+
+    map.on('mouseleave', 'alternate-outline', function () {
+      map.getCanvas().style.cursor = '';
+    });
+  }
+
+  obstacles.plotAround(map, geojsonLines[activeIndex]);
+};
+
+var route = function(m, s, e) {
+  map = m;
+  start = s;
+  end = e;
+
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4) {
@@ -61,61 +316,37 @@ var route = function(map, start, end) {
         console.log('Error: ' + xhttp.status);
       }
       else{
-        var result = JSON.parse(xhttp.response);
+        routes = JSON.parse(xhttp.response).routes;
 
-        cleanRoutes(map);
-
-        var routeBounds = new maplibregl.LngLatBounds(
+        routeBounds = new maplibregl.LngLatBounds(
           [Math.min(start.lng, end.lng), Math.min(start.lat, end.lat)],
           [Math.max(start.lng, end.lng), Math.max(start.lat, end.lat)]
         );
 
-        for (var i = 0; i < Math.min(maxAlternatives, result.routes.length); i++) {
-          var route = result.routes[i];
-          var name = 'route-' + i.toString();
+        var nbRoutes =  Math.min(routes.length, 2);
 
-          var geojsonLine = getGeojsonLine(route);
-          map.addSource(name, {
-            'type': 'geojson',
-            'data': geojsonLine
-          });
+        geojsonLines = [];
+
+        for (var i = 0; i < nbRoutes; i++) {
+          var geojsonLine = getGeojsonLine(routes[i]);
 
           var coordinates = geojsonLine.geometry.coordinates;
           routeBounds = coordinates.reduce(function (bounds, coord) {
             return bounds.extend(coord);
           }, routeBounds);
 
-          map.addLayer({
-            'id': name,
-            'type': 'line',
-            'source': name,
-            'layout': {
-              'line-join': 'round',
-              'line-cap': 'round'
-            },
-            'paint': {
-              'line-color': routeColors[i],
-              'line-width': 11,
-              'line-opacity': 0.65
-            }
-          });
-
-          if (i === 0) {
-            images.plotAround(map, geojsonLine, start);
-            obstacles.plotAround(map, geojsonLine);
-          } else {
-            map.moveLayer(name, 'route-0');
-          }
+          geojsonLines.push(geojsonLine);
         }
 
-        map.fitBounds(routeBounds, {
-          padding: 20
-        });
+        plotRoutes();
+
+        showStart();
+        showEnd();
       }
     }
   };
 
-  xhttp.open('GET', getRouteRequest(start, end));
+  xhttp.open('GET', getRouteRequest());
   xhttp.send();
 };
 
