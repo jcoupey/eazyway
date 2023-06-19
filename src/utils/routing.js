@@ -26,9 +26,13 @@ var setStart = function(map, lngLat) {
     .addTo(map);
 
   start.on('dragend', function(e) {
+    setStartAddress(e.target.getLngLat());
     getRoutes(map);
   });
 
+  if (!hasStartAddress()) {
+    setStartAddress(lngLat);
+  }
   getRoutes(map);
 };
 
@@ -110,6 +114,26 @@ var init = function(map) {
   startGeocoder.on('result', function(e) {
     setStart(map, e.result.center);
   });
+};
+
+var hasStartAddress = function() {
+  return document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].textLength != 0;
+};
+
+var setStartAddress = async (lngLat) => {
+  try {
+    let request =
+        'https://nominatim.openstreetmap.org/reverse.php?lat=' + lngLat.lat +
+        '&lon=' + lngLat.lng +
+        '&format=geojson';
+    const response = await fetch(request);
+    const geojson = await response.json();
+
+    document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].value
+      = geojson.features[0].properties.display_name;
+  } catch (e) {
+    console.error(`Failed to reverse geocode with error: ${e}`);
+  }
 };
 
 module.exports = {
