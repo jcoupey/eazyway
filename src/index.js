@@ -110,4 +110,5 @@ map.on('load', function () {
   });
 });
 
+routing.init(map);
 viewer.init(map);
