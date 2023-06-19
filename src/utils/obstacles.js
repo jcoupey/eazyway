@@ -48,11 +48,7 @@ var plotAround = function(map, geojsonLine) {
     'filter': ['has', 'show']
   });
 
-  map.moveLayer('obstacles');
-
   map.on('mouseenter', 'obstacles', function (e) {
-    map.getCanvas().style.cursor = 'pointer';
-
     var coordinates = e.features[0].geometry.coordinates.slice();
     var description = e.features[0].properties.id;
 
@@ -69,7 +65,6 @@ var plotAround = function(map, geojsonLine) {
   });
 
   map.on('mouseleave', 'obstacles', function () {
-    map.getCanvas().style.cursor = '';
     popup.remove();
   });
 }
