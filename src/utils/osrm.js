@@ -291,6 +291,14 @@ var plotRoutes = function() {
         plotRoutes();
       }
     });
+
+    map.on('mouseenter', 'alternate-outline', function () {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+
+    map.on('mouseleave', 'alternate-outline', function () {
+      map.getCanvas().style.cursor = '';
+    });
   }
 
   obstacles.plotAround(map, geojsonLines[activeIndex]);
