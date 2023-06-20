@@ -102,6 +102,12 @@ map.on('load', function () {
     popup.remove();
   });
 
+  map.on('click', 'hotels', function (e) {
+    var coordinates = e.features[0].geometry.coordinates.slice();
+
+    routing.setStart(map, coordinates, true);
+  });
+
   map.loadImage('img/danger.png', function(error, image) {
     if (error) throw error;
     map.addImage('danger', image);
