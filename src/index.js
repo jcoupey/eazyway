@@ -119,6 +119,10 @@ map.on('load', function () {
   geocoding.end.on('result', function(e) {
     routing.setEnd(map, e.result.center);
   });
+
+  var end = new maplibregl.LngLat(poi.stadium.geometry.coordinates[0],
+                                  poi.stadium.geometry.coordinates[1]);
+  routing.setEnd(map, end);
 });
 
 viewer.init(map);
