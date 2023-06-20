@@ -8,10 +8,10 @@ var poi = require('./static.js');
 
 map.on('click', function(e) {
   if (!routing.hasStart()) {
-    routing.setStart(map, e.lngLat);
+    routing.setStart(map, e.lngLat, true);
   } else {
     if (!routing.hasEnd()) {
-      routing.setEnd(map, e.lngLat);
+      routing.setEnd(map, e.lngLat, true);
     }
   }
 });
@@ -109,15 +109,15 @@ map.on('load', function () {
 
   map.addControl(geocoding.start, 'top-left');
   geocoding.start.on('result', function(e) {
-    routing.setStart(map, e.result.center);
+    routing.setStart(map, e.result.center, false);
   });
 
   map.addControl(geocoding.end, 'top-left');
   geocoding.end.on('result', function(e) {
-    routing.setEnd(map, e.result.center);
+    routing.setEnd(map, e.result.center, false);
   });
 
-  routing.setEnd(map, poi.stadium.geometry.coordinates);
+  routing.setEnd(map, poi.stadium.geometry.coordinates, true);
 });
 
 viewer.init(map);

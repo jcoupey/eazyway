@@ -14,7 +14,7 @@ var hasEnd = function() {
   return end != undefined;
 };
 
-var setStart = function(map, lngLat) {
+var setStart = function(map, lngLat, updateAddress) {
   if (start) {
     start.remove();
   }
@@ -31,13 +31,13 @@ var setStart = function(map, lngLat) {
     getRoutes(map);
   });
 
-  if (!hasStartAddress()) {
+  if (updateAddress) {
     setStartAddress(lngLat);
   }
   getRoutes(map);
 };
 
-var setEnd = function(map, lngLat) {
+var setEnd = function(map, lngLat, updateAddress) {
   if (end) {
     end.remove();
   }
@@ -54,7 +54,7 @@ var setEnd = function(map, lngLat) {
     getRoutes(map);
   });
 
-  if (!hasEndAddress()) {
+  if (updateAddress) {
     setEndAddress(lngLat);
   }
   getRoutes(map);
@@ -64,14 +64,6 @@ var getRoutes = function(map) {
   if (start && end) {
     osrm.route(map, start.getLngLat(), end.getLngLat());
   }
-};
-
-var hasStartAddress = function() {
-  return document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].textLength != 0;
-};
-
-var hasEndAddress = function() {
-  return document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[1].textLength != 0;
 };
 
 var setStartAddress = async (lngLat) => {
