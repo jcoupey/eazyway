@@ -63,7 +63,19 @@ const end = new MaplibreGeocoder(geocoder_api, {
   flyTo: false
 });
 
+var reverseName = async (lngLat) => {
+  let request =
+      'https://nominatim.openstreetmap.org/reverse.php?lat=' + lngLat.lat +
+      '&lon=' + lngLat.lng +
+      '&format=geojson';
+  const response = await fetch(request);
+  const geojson = await response.json();
+
+  return geojson.features[0].properties.display_name;
+};
+
 module.exports = {
   start: start,
-  end: end
+  end: end,
+  reverseName: reverseName
 };

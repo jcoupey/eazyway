@@ -1,6 +1,7 @@
 'use strict';
 
 var osrm = require('./osrm.js');
+var geocoding = require('./geocoding.js');
 
 var start;
 var end;
@@ -75,15 +76,9 @@ var hasEndAddress = function() {
 
 var setStartAddress = async (lngLat) => {
   try {
-    let request =
-        'https://nominatim.openstreetmap.org/reverse.php?lat=' + lngLat.lat +
-        '&lon=' + lngLat.lng +
-        '&format=geojson';
-    const response = await fetch(request);
-    const geojson = await response.json();
+    const name = await geocoding.reverseName(lngLat);
 
-    document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].value
-      = geojson.features[0].properties.display_name;
+    document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].value = name;
   } catch (e) {
     console.error(`Failed to reverse geocode with error: ${e}`);
   }
@@ -91,15 +86,9 @@ var setStartAddress = async (lngLat) => {
 
 var setEndAddress = async (lngLat) => {
   try {
-    let request =
-        'https://nominatim.openstreetmap.org/reverse.php?lat=' + lngLat.lat +
-        '&lon=' + lngLat.lng +
-        '&format=geojson';
-    const response = await fetch(request);
-    const geojson = await response.json();
+    const name = await geocoding.reverseName(lngLat);
 
-    document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[1].value
-      = geojson.features[0].properties.display_name;
+    document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[1].value = name;
   } catch (e) {
     console.error(`Failed to reverse geocode with error: ${e}`);
   }

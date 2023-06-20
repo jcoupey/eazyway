@@ -97,9 +97,6 @@ map.on('load', function () {
     popup.setLngLat(coordinates).setHTML(name).addTo(map);
   });
 
-  map.on('mouseenter', 'hotels', function () {
-  });
-
   map.on('mouseleave', 'hotels', function () {
     map.getCanvas().style.cursor = '';
     popup.remove();
