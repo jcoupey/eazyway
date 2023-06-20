@@ -1,6 +1,7 @@
 'use strict';
 
 var map = require('./config/map.js').map;
+var geocoding = require('./utils/geocoding.js');
 var routing = require('./utils/routing.js');
 var viewer = require('./utils/viewer.js');
 var poi = require('./static.js');
@@ -108,7 +109,16 @@ map.on('load', function () {
     if (error) throw error;
     map.addImage('danger', image);
   });
+
+  map.addControl(geocoding.start, 'top-left');
+  geocoding.start.on('result', function(e) {
+    routing.setStart(map, e.result.center);
+  });
+
+  map.addControl(geocoding.end, 'top-left');
+  geocoding.end.on('result', function(e) {
+    routing.setEnd(map, e.result.center);
+  });
 });
 
-routing.init(map);
 viewer.init(map);
