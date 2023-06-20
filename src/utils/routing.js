@@ -37,6 +37,10 @@ var setStart = function(map, lngLat) {
 };
 
 var setEnd = function(map, lngLat) {
+  if (end) {
+    end.remove();
+  }
+
   end = new maplibregl.Marker({
     draggable: true,
     color: '#d02601'
@@ -44,8 +48,14 @@ var setEnd = function(map, lngLat) {
     .setLngLat(lngLat)
     .addTo(map);
 
-  end.on('dragend', () => { getRoutes(map); });
+  end.on('dragend', function(e) {
+    setEndAddress(e.target.getLngLat());
+    getRoutes(map);
+  });
 
+  if (!hasEndAddress()) {
+    setEndAddress(lngLat);
+  }
   getRoutes(map);
 };
 
@@ -108,16 +118,34 @@ const startGeocoder = new MaplibreGeocoder(geocoder_api, {
   flyTo: false
 });
 
+const endGeocoder = new MaplibreGeocoder(geocoder_api, {
+  placeholder: 'End',
+  marker: false,
+  limit: 3,
+  bbox: [2.31293, 48.80223, 2.37949, 48.82973],
+  showResultsWhileTyping: true,
+  minLength: 3,
+  flyTo: false
+});
+
 var init = function(map) {
   map.addControl(startGeocoder, 'top-left');
-
   startGeocoder.on('result', function(e) {
     setStart(map, e.result.center);
+  });
+
+ map.addControl(endGeocoder, 'top-left');
+  endGeocoder.on('result', function(e) {
+    setEnd(map, e.result.center);
   });
 };
 
 var hasStartAddress = function() {
   return document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].textLength != 0;
+};
+
+var hasEndAddress = function() {
+  return document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[1].textLength != 0;
 };
 
 var setStartAddress = async (lngLat) => {
@@ -130,6 +158,22 @@ var setStartAddress = async (lngLat) => {
     const geojson = await response.json();
 
     document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[0].value
+      = geojson.features[0].properties.display_name;
+  } catch (e) {
+    console.error(`Failed to reverse geocode with error: ${e}`);
+  }
+};
+
+var setEndAddress = async (lngLat) => {
+  try {
+    let request =
+        'https://nominatim.openstreetmap.org/reverse.php?lat=' + lngLat.lat +
+        '&lon=' + lngLat.lng +
+        '&format=geojson';
+    const response = await fetch(request);
+    const geojson = await response.json();
+
+    document.getElementsByClassName('mapboxgl-ctrl-geocoder--input')[1].value
       = geojson.features[0].properties.display_name;
   } catch (e) {
     console.error(`Failed to reverse geocode with error: ${e}`);
