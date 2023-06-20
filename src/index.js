@@ -62,6 +62,10 @@ map.on('load', function () {
     popup.remove();
   });
 
+  map.on('click', 'stadium', function (e) {
+    routing.setEnd(map, poi.stadium.geometry.coordinates, true);
+  });
+
   map.addSource('hotels', {
     'type': 'geojson',
     'data': poi.hotels
