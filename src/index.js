@@ -117,9 +117,7 @@ map.on('load', function () {
     routing.setEnd(map, e.result.center);
   });
 
-  var end = new maplibregl.LngLat(poi.stadium.geometry.coordinates[0],
-                                  poi.stadium.geometry.coordinates[1]);
-  routing.setEnd(map, end);
+  routing.setEnd(map, poi.stadium.geometry.coordinates);
 });
 
 viewer.init(map);
