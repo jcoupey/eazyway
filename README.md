@@ -21,8 +21,18 @@ python3 scripts/get_obstacles.py URL
 
 #### Set custom vector tile style
 
+Add file src/config/style.js` and implement the `set` function in `src/config/style.js`:
+
 ```
-cp your_style.json data/style.json
+var set = function(map) {
+  // TODO get your own style object
+
+  map.setStyle(style);
+};
+
+module.exports = {
+  set: set
+};
 ```
 
 #### Set Mapillary access token
