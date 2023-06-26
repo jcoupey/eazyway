@@ -34,6 +34,9 @@ var setStart = function(map, lngLat, updateAddress) {
   if (updateAddress) {
     setStartAddress(lngLat);
   }
+
+  geocoding.start._clearEl.style.display = "block"
+
   getRoutes(map);
 };
 
@@ -57,6 +60,9 @@ var setEnd = function(map, lngLat, updateAddress) {
   if (updateAddress) {
     setEndAddress(lngLat);
   }
+
+  geocoding.end._clearEl.style.display = "block"
+
   getRoutes(map);
 };
 

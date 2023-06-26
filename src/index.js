@@ -127,6 +127,12 @@ map.on('load', function () {
     routing.setEnd(map, e.result.center, false);
   });
 
+  // Hack to keep geocoding clear buttons always visible.
+  geocoding.start.container
+    .removeEventListener('mouseleave', geocoding.start._hideButton);
+  geocoding.end.container
+    .removeEventListener('mouseleave', geocoding.end._hideButton);
+
   routing.setEnd(map, poi.stadium.geometry.coordinates, true);
 });
 
