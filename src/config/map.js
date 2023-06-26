@@ -11,7 +11,7 @@ var map = new maplibregl.Map({
 
 style.set(map);
 
-map.addControl(new maplibregl.NavigationControl());
+map.addControl(new maplibregl.NavigationControl({showCompass: false}));
 
 module.exports = {
   map: map
