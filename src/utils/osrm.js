@@ -266,8 +266,20 @@ var plotRoutes = function() {
     .setHTML(displayDistance(routes[activeIndex]))
     .addTo(map);
 
+  const defaultPadding = 30;
+  var topPadding = 50;
+  var geocoderDivs = document.getElementsByClassName('maplibregl-ctrl-geocoder');
+  for (var i = 0; i < geocoderDivs.length; ++i) {
+    topPadding += geocoderDivs[i].clientHeight;
+  }
+
   map.fitBounds(routeBounds, {
-    padding: 20
+    padding: {
+      top: topPadding,
+      bottom: defaultPadding,
+      left: defaultPadding,
+      right: defaultPadding
+    }
   });
 
   images.plotAround(map, geojsonLines[activeIndex], start);
