@@ -67,8 +67,9 @@ var plotAround = function(map, geojsonLine) {
   map.on('mouseleave', 'obstacles', function () {
     popup.remove();
   });
-}
+};
 
 module.exports = {
-  plotAround: plotAround
+  plotAround: plotAround,
+  resetObstaclesLayer: resetObstaclesLayer
 };

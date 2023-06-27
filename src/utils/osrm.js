@@ -186,6 +186,9 @@ var cleanRoutes = function() {
     distancePopup.remove();
   }
 
+  removeLayerAndSource('start');
+  removeLayerAndSource('end');
+
   routeNames.forEach(name => {
     if (map.getLayer(name)) {
       map.removeLayer(name);
@@ -350,6 +353,14 @@ var route = function(m, s, e) {
   xhttp.send();
 };
 
+var reset = function() {
+  cleanRoutes();
+
+  images.resetImagesLayer(map);
+  obstacles.resetObstaclesLayer(map);
+};
+
 module.exports = {
+  reset: reset,
   route: route
 };

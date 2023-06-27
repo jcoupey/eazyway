@@ -72,6 +72,19 @@ var getRoutes = function(map) {
   }
 };
 
+var reset = function(options) {
+  if (options.start) {
+    start.remove();
+    start = undefined;
+  }
+  if (options.end) {
+    end.remove();
+    end = undefined;
+  }
+
+  osrm.reset();
+};
+
 var setStartAddress = async (lngLat) => {
   try {
     const name = await geocoding.reverseName(lngLat);
@@ -93,6 +106,7 @@ var setEndAddress = async (lngLat) => {
 };
 
 module.exports = {
+  reset: reset,
   hasStart: hasStart,
   hasEnd: hasEnd,
   setStart: setStart,

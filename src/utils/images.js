@@ -12,6 +12,8 @@ var resetImagesLayer = function(map) {
   if (map.getSource('mapillary-images')) {
     map.removeSource('mapillary-images');
   }
+
+  viewer.hideMarker();
 }
 
 var imageIds = [];
@@ -90,8 +92,9 @@ var plotAround = function(map, geojsonLine, start) {
     viewer.filterImages(imageIds);
     viewer.setCurrentImage(startImage);
   }
-}
+};
 
 module.exports = {
-  plotAround: plotAround
+  plotAround: plotAround,
+  resetImagesLayer: resetImagesLayer
 };

@@ -133,6 +133,11 @@ map.on('load', function () {
   geocoding.end.container
     .removeEventListener('mouseleave', geocoding.end._hideButton);
 
+  // Remove routes and start/end markers on geocoder action.
+  var hideButtons = document.getElementsByClassName('maplibregl-ctrl-geocoder--button');
+  hideButtons[0].addEventListener('click', () => { routing.reset({start: true, end: false}); });
+  hideButtons[1].addEventListener('click', () => { routing.reset({start: false, end: true}); });
+
   routing.setEnd(map, poi.stadium.geometry.coordinates, true);
 });
 
