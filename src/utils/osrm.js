@@ -14,18 +14,18 @@ var switchRoutes = false;
 
 const routeStyle = {
   active: {
-    color: '#6fa8dc',
+    color: '#571cb5',
     opacity: 1,
     width: 6,
     outline: {
-      color: '#0b5394',
+      color: '#2e0a45',
       opacity: 1,
       width: 10
     }
   },
   alternate: {
-    color: '#efd3b6',
-    opacity: 0.6,
+    color: '#ffac05',
+    opacity: 1,
     width: 6,
     outline: {
       color: '#da8021',

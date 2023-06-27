@@ -31,7 +31,7 @@ map.on('load', function () {
       'circle-stroke-width': 1,
       'circle-stroke-opacity': 1,
       'circle-radius': 10,
-      'circle-color': 'red',
+      'circle-color': '#fe0278',
       'circle-opacity': 0.7
     }
   });
@@ -80,7 +80,7 @@ map.on('load', function () {
       'circle-stroke-width': 1,
       'circle-stroke-opacity': 1,
       'circle-radius': 8,
-      'circle-color': 'green',
+      'circle-color': '#ffac05',
       'circle-opacity': 0.7
     }
   });
