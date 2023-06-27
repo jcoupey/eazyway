@@ -63,9 +63,16 @@ var hideMarker = function() {
   imageMarker.remove();
 };
 
+var resize = function() {
+  if (mjs) {
+    mjs.resize();
+  }
+};
+
 module.exports = {
   init: init,
   filterImages: filterImages,
   hideMarker: hideMarker,
+  resize: resize,
   setCurrentImage: setCurrentImage
 };

@@ -1,3 +1,7 @@
+'use strict';
+
+var viewer = require('./utils/viewer.js');
+
 // Taken and adjusted from https://htmldom.dev/create-resizable-split-views/
 
 const resizer = document.getElementById('dragMe');
@@ -36,6 +40,7 @@ const mouseMoveHandler = function (e) {
   leftSide.style.width = `${newLeftWidth}%`;
 
   document.body.style.cursor = 'col-resize';
+  viewer.resize();
 
   leftSide.style.userSelect = 'none';
   leftSide.style.pointerEvents = 'none';
