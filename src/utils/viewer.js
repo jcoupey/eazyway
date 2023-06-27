@@ -19,7 +19,12 @@ var init = function(m) {
   mjs = new Viewer({
     accessToken: ACCESS_TOKEN,
     container: 'mjs',
-    component: { cover: false }
+    component: {
+      cover: false,
+      sequence: {
+        visible: false
+      }
+    }
   });
 
   const img = document.createElement("img");
