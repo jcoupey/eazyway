@@ -272,6 +272,7 @@ var plotRoutes = function() {
   for (var i = 0; i < geocoderDivs.length; ++i) {
     topPadding += geocoderDivs[i].clientHeight;
   }
+  topPadding += document.getElementsByClassName('logo')[0].clientHeight;
 
   map.fitBounds(routeBounds, {
     padding: {

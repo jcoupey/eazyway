@@ -16,6 +16,20 @@ map.on('click', function(e) {
   }
 });
 
+class logoControl {
+  onAdd(map) {
+    this._map = map;
+    this._container = document.createElement('div');
+    this._container.className = 'maplibregl-ctrl logo';
+    return this._container;
+  }
+
+  onRemove() {
+    this._container.parentNode.removeChild(this._container);
+    this._map = undefined;
+  }
+}
+
 map.on('load', function () {
   map.addSource('stadium', {
     'type': 'geojson',
@@ -116,6 +130,9 @@ map.on('load', function () {
     if (error) throw error;
     map.addImage('danger', image);
   });
+
+  var logo = new logoControl();
+  map.addControl(logo, 'top-left');
 
   map.addControl(geocoding.start, 'top-left');
   geocoding.start.on('result', function(e) {

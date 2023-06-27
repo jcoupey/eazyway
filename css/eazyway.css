@@ -5,3 +5,15 @@
 .maplibregl-ctrl-geocoder .suggestions{
     position: relative;
 }
+
+.logo{
+    width: 220px;
+    height: 70px;
+    background: url('../img/eazyway.svg');
+    background-size: 200px 50px;
+    background-color: white;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
