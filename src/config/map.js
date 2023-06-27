@@ -1,13 +1,17 @@
 'use strict';
 
-var style = require('../../data/style.json');
+const style = require('./style.js');
 
 var map = new maplibregl.Map({
   container: 'map', // container id
-  style: style,
   center: [2.34621, 48.81598], // starting position
-  zoom: 13 // starting zoom
+  zoom: 13, // starting zoom
+  hash: true
 });
+
+style.set(map);
+
+map.addControl(new maplibregl.NavigationControl({showCompass: false}));
 
 module.exports = {
   map: map

@@ -4,16 +4,18 @@ var {Viewer} = mapillary;
 
 const ACCESS_TOKEN  = require('../../data/mly_token.json');
 
+var map;
 var mjs;
 
 var imageMarker;
 
-var updateMarker = function(map, img) {
+var updateMarker = function(img) {
   imageMarker.setLngLat([img.originalLngLat.lng, img.originalLngLat.lat]);
   imageMarker.addTo(map);
-}
+};
 
-var init = function(map) {
+var init = function(m) {
+  map = m;
   mjs = new Viewer({
     accessToken: ACCESS_TOKEN,
     container: 'mjs',
@@ -29,7 +31,7 @@ var init = function(map) {
 
   mjs.on("image", function() {
     mjs.getImage().then(function(img) {
-      updateMarker(map, img);
+      updateMarker(img);
     });
   });
 
@@ -38,18 +40,27 @@ var init = function(map) {
       imageMarker.setRotation(bearing);
     });
   });
-}
+};
 
 var setCurrentImage = function(id) {
-  mjs.moveTo(id);
-}
+  mjs.moveTo(id).then(
+    // Required in case of route update with the same first image in
+    // which case the 'image' event is not triggered by moveTo.
+    () => {imageMarker.addTo(map);}
+  );
+};
 
 var filterImages = function(ids) {
   mjs.setFilter(['in', 'id', ...ids]);
-}
+};
+
+var hideMarker = function() {
+  imageMarker.remove();
+};
 
 module.exports = {
   init: init,
   filterImages: filterImages,
+  hideMarker: hideMarker,
   setCurrentImage: setCurrentImage
 };

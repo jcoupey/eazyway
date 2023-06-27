@@ -1,0 +1,7 @@
+.maplibregl-ctrl-geocoder{
+    min-width: 400px;
+}
+
+.maplibregl-ctrl-geocoder .suggestions{
+    position: relative;
+}

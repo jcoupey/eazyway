@@ -1,16 +1,17 @@
 'use strict';
 
 var map = require('./config/map.js').map;
+var geocoding = require('./utils/geocoding.js');
 var routing = require('./utils/routing.js');
 var viewer = require('./utils/viewer.js');
 var poi = require('./static.js');
 
 map.on('click', function(e) {
   if (!routing.hasStart()) {
-    routing.setStart(map, e.lngLat);
+    routing.setStart(map, e.lngLat, true);
   } else {
     if (!routing.hasEnd()) {
-      routing.setEnd(map, e.lngLat);
+      routing.setEnd(map, e.lngLat, true);
     }
   }
 });
@@ -61,6 +62,10 @@ map.on('load', function () {
     popup.remove();
   });
 
+  map.on('click', 'stadium', function (e) {
+    routing.setEnd(map, poi.stadium.geometry.coordinates, true);
+  });
+
   map.addSource('hotels', {
     'type': 'geojson',
     'data': poi.hotels
@@ -96,18 +101,44 @@ map.on('load', function () {
     popup.setLngLat(coordinates).setHTML(name).addTo(map);
   });
 
-  map.on('mouseenter', 'hotels', function () {
-  });
-
   map.on('mouseleave', 'hotels', function () {
     map.getCanvas().style.cursor = '';
     popup.remove();
+  });
+
+  map.on('click', 'hotels', function (e) {
+    var coordinates = e.features[0].geometry.coordinates.slice();
+
+    routing.setStart(map, coordinates, true);
   });
 
   map.loadImage('img/danger.png', function(error, image) {
     if (error) throw error;
     map.addImage('danger', image);
   });
+
+  map.addControl(geocoding.start, 'top-left');
+  geocoding.start.on('result', function(e) {
+    routing.setStart(map, e.result.center, false);
+  });
+
+  map.addControl(geocoding.end, 'top-left');
+  geocoding.end.on('result', function(e) {
+    routing.setEnd(map, e.result.center, false);
+  });
+
+  // Hack to keep geocoding clear buttons always visible.
+  geocoding.start.container
+    .removeEventListener('mouseleave', geocoding.start._hideButton);
+  geocoding.end.container
+    .removeEventListener('mouseleave', geocoding.end._hideButton);
+
+  // Remove routes and start/end markers on geocoder action.
+  var hideButtons = document.getElementsByClassName('maplibregl-ctrl-geocoder--button');
+  hideButtons[0].addEventListener('click', () => { routing.reset({start: true, end: false}); });
+  hideButtons[1].addEventListener('click', () => { routing.reset({start: false, end: true}); });
+
+  routing.setEnd(map, poi.stadium.geometry.coordinates, true);
 });
 
 viewer.init(map);
