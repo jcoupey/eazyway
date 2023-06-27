@@ -6,6 +6,8 @@ var routing = require('./utils/routing.js');
 var viewer = require('./utils/viewer.js');
 var poi = require('./static.js');
 
+var resizer = require('./resizer.js');
+
 map.on('click', function(e) {
   if (!routing.hasStart()) {
     routing.setStart(map, e.lngLat, true);

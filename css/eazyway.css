@@ -1,12 +1,12 @@
-.maplibregl-ctrl-geocoder{
+.maplibregl-ctrl-geocoder {
     min-width: 400px;
 }
 
-.maplibregl-ctrl-geocoder .suggestions{
+.maplibregl-ctrl-geocoder .suggestions {
     position: relative;
 }
 
-.logo{
+.logo {
     width: 220px;
     height: 70px;
     background: url('../img/eazyway.svg');
@@ -16,4 +16,19 @@
     background-position: center;
     box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
+}
+
+.resizer {
+    background-color: #cbd5e0;
+    cursor: ew-resize;
+    height: 100%;
+    width: 4px;
+}
+
+#map {
+    width: 75%;
+}
+
+#mjs {
+    flex: 1 1 0%;
 }
