@@ -39,5 +39,5 @@ if __name__ == "__main__":
         ],
     }
 
-    with open("data/obstacles_list.json", "w") as out:
+    with open("data/obstacles.json", "w") as out:
         json.dump(geojson_obstacles, out)

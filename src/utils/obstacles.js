@@ -13,10 +13,7 @@ var resetObstaclesLayer = function(map) {
   }
 }
 
-var popup = new maplibregl.Popup({
-closeButton: false,
-closeOnClick: false
-});
+var popup = new maplibregl.Popup().setMaxWidth('400px');
 
 var plotAround = function(map, geojsonLine) {
   var buffer = turf.buffer(geojsonLine, 0.005);
@@ -49,8 +46,16 @@ var plotAround = function(map, geojsonLine) {
   });
 
   map.on('mouseenter', 'obstacles', function (e) {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'obstacles', function () {
+    map.getCanvas().style.cursor = '';
+  });
+
+  map.on('click', 'obstacles', function (e) {
     var coordinates = e.features[0].geometry.coordinates.slice();
-    var description = e.features[0].properties.id;
+    var html = '<img class="popup-img" src="img/obstacles/' + e.features[0].properties.id + '.jpg">';
 
     // Ensure that if the map is zoomed out such that multiple
     // copies of the feature are visible, the popup appears
@@ -60,12 +65,8 @@ var plotAround = function(map, geojsonLine) {
     }
 
     popup.setLngLat(coordinates)
-      .setHTML(description)
+      .setHTML(html)
       .addTo(map);
-  });
-
-  map.on('mouseleave', 'obstacles', function () {
-    popup.remove();
   });
 };
 

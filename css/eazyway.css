@@ -42,3 +42,8 @@
     height: 10vh;
     cursor: col-resize;
 }
+
+.popup-img {
+    max-width: 300px;
+    max-height: 300px;
+}
