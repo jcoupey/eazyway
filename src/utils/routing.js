@@ -2,6 +2,7 @@
 
 var osrm = require('./osrm.js');
 var geocoding = require('./geocoding.js');
+var viewer = require('./viewer.js');
 
 var start;
 var end;
@@ -68,6 +69,14 @@ var setEnd = function(map, lngLat, updateAddress) {
 
 var getRoutes = function(map) {
   if (start && end) {
+    var mapDiv = document.getElementById('map');
+    var fullWidth = document.getElementById('full-page').offsetWidth;
+    var resizeWidth = document.getElementById('dragMe').offsetWidth;
+    var mapWidth = mapDiv.offsetWidth;
+    if (fullWidth == mapWidth + resizeWidth) {
+      mapDiv.style.width = '70%';
+      viewer.resize();
+    }
     osrm.route(map, start.getLngLat(), end.getLngLat());
   }
 };
