@@ -2,6 +2,7 @@
 
 var osrm = require('./osrm.js');
 var geocoding = require('./geocoding.js');
+var urlHandler = require('./url_handler.js');
 var viewer = require('./viewer.js');
 
 var start;
@@ -13,6 +14,10 @@ var hasStart = function() {
 
 var hasEnd = function() {
   return end != undefined;
+};
+
+var strCoords = function(loc) {
+  return loc.lng.toFixed(6) + ',' + loc.lat.toFixed(6);
 };
 
 var setStart = function(map, lngLat, updateAddress) {
@@ -30,6 +35,7 @@ var setStart = function(map, lngLat, updateAddress) {
   start.on('dragend', function(e) {
     setStartAddress(e.target.getLngLat());
     getRoutes(map);
+    urlHandler.set('start', strCoords(start.getLngLat()));
   });
 
   if (updateAddress) {
@@ -37,6 +43,8 @@ var setStart = function(map, lngLat, updateAddress) {
   }
 
   geocoding.start._clearEl.style.display = "block"
+
+  urlHandler.set('start', strCoords(start.getLngLat()));
 
   getRoutes(map);
 };
@@ -56,6 +64,7 @@ var setEnd = function(map, lngLat, updateAddress) {
   end.on('dragend', function(e) {
     setEndAddress(e.target.getLngLat());
     getRoutes(map);
+    urlHandler.set('end', strCoords(end.getLngLat()));
   });
 
   if (updateAddress) {
@@ -63,6 +72,8 @@ var setEnd = function(map, lngLat, updateAddress) {
   }
 
   geocoding.end._clearEl.style.display = "block"
+
+  urlHandler.set('end', strCoords(end.getLngLat()));
 
   getRoutes(map);
 };
@@ -85,10 +96,12 @@ var reset = function(options) {
   if (options.start) {
     start.remove();
     start = undefined;
+    urlHandler.reset('start');
   }
   if (options.end) {
     end.remove();
     end = undefined;
+    urlHandler.reset('end');
   }
 
   osrm.reset();
