@@ -1,3 +1,12 @@
+#map {
+    width: 75%;
+}
+
+#mjs {
+    flex: 1 1 0%;
+    z-index: 1;
+}
+
 .maplibregl-ctrl-geocoder {
     min-width: 400px;
 }
@@ -19,16 +28,17 @@
 }
 
 .resizer {
-    background-color: #cbd5e0;
+    background-color: #ffffff;
     cursor: ew-resize;
     height: 100%;
     width: 4px;
+    display: flex;
+    align-items: center;
+    z-index: 14;
 }
 
-#map {
-    width: 75%;
-}
-
-#mjs {
-    flex: 1 1 0%;
+.separator {
+    width: 20px;
+    height: 10vh;
+    cursor: col-resize;
 }
