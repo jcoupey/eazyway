@@ -2,6 +2,7 @@
 
 var osrm = require('./osrm.js');
 var geocoding = require('./geocoding.js');
+var viewer = require('./viewer.js');
 
 var start;
 var end;
@@ -21,7 +22,7 @@ var setStart = function(map, lngLat, updateAddress) {
 
   start = new maplibregl.Marker({
     draggable: true,
-    color: 'green'
+    color: '#ffac05'
   })
     .setLngLat(lngLat)
     .addTo(map);
@@ -47,7 +48,7 @@ var setEnd = function(map, lngLat, updateAddress) {
 
   end = new maplibregl.Marker({
     draggable: true,
-    color: '#d02601'
+    color: '#fe0278'
   })
     .setLngLat(lngLat)
     .addTo(map);
@@ -68,6 +69,14 @@ var setEnd = function(map, lngLat, updateAddress) {
 
 var getRoutes = function(map) {
   if (start && end) {
+    var mapDiv = document.getElementById('map');
+    var fullWidth = document.getElementById('full-page').offsetWidth;
+    var resizeWidth = document.getElementById('dragMe').offsetWidth;
+    var mapWidth = mapDiv.offsetWidth;
+    if (fullWidth == mapWidth + resizeWidth) {
+      mapDiv.style.width = '70%';
+      viewer.resize();
+    }
     osrm.route(map, start.getLngLat(), end.getLngLat());
   }
 };

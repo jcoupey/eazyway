@@ -6,15 +6,21 @@ var routing = require('./utils/routing.js');
 var viewer = require('./utils/viewer.js');
 var poi = require('./static.js');
 
-map.on('click', function(e) {
-  if (!routing.hasStart()) {
-    routing.setStart(map, e.lngLat, true);
-  } else {
-    if (!routing.hasEnd()) {
-      routing.setEnd(map, e.lngLat, true);
-    }
+var resizer = require('./resizer.js');
+
+class logoControl {
+  onAdd(map) {
+    this._map = map;
+    this._container = document.createElement('div');
+    this._container.className = 'maplibregl-ctrl logo';
+    return this._container;
   }
-});
+
+  onRemove() {
+    this._container.parentNode.removeChild(this._container);
+    this._map = undefined;
+  }
+}
 
 map.on('load', function () {
   map.addSource('stadium', {
@@ -31,7 +37,7 @@ map.on('load', function () {
       'circle-stroke-width': 1,
       'circle-stroke-opacity': 1,
       'circle-radius': 10,
-      'circle-color': 'red',
+      'circle-color': '#fe0278',
       'circle-opacity': 0.7
     }
   });
@@ -63,6 +69,8 @@ map.on('load', function () {
   });
 
   map.on('click', 'stadium', function (e) {
+    e.originalEvent.preventDefault();
+
     routing.setEnd(map, poi.stadium.geometry.coordinates, true);
   });
 
@@ -80,7 +88,7 @@ map.on('load', function () {
       'circle-stroke-width': 1,
       'circle-stroke-opacity': 1,
       'circle-radius': 8,
-      'circle-color': 'green',
+      'circle-color': '#ffac05',
       'circle-opacity': 0.7
     }
   });
@@ -107,15 +115,32 @@ map.on('load', function () {
   });
 
   map.on('click', 'hotels', function (e) {
+    e.originalEvent.preventDefault();
+
     var coordinates = e.features[0].geometry.coordinates.slice();
 
     routing.setStart(map, coordinates, true);
+  });
+
+  map.on('click', function(e) {
+    if(!e.originalEvent.defaultPrevented) {
+      if (!routing.hasStart()) {
+        routing.setStart(map, e.lngLat, true);
+      } else {
+        if (!routing.hasEnd()) {
+          routing.setEnd(map, e.lngLat, true);
+        }
+      }
+    }
   });
 
   map.loadImage('img/danger.png', function(error, image) {
     if (error) throw error;
     map.addImage('danger', image);
   });
+
+  var logo = new logoControl();
+  map.addControl(logo, 'top-left');
 
   map.addControl(geocoding.start, 'top-left');
   geocoding.start.on('result', function(e) {

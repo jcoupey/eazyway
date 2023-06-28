@@ -20,9 +20,12 @@
   </head>
 
   <body>
-    <div style="display: flex; height: 100vh;">
-      <div id="map" style="flex:3;"></div>
-      <div id="mjs" style="flex:2;"></div>
+    <div id="full-page" style="display: flex; height: 100vh;">
+      <div id="map"></div>
+      <div class="resizer" id="dragMe">
+        <button class="separator"> || </button>
+      </div>
+      <div id="mjs"></div>
     </div>
 
     <script  src="src/index.js"></script>

@@ -14,18 +14,18 @@ var switchRoutes = false;
 
 const routeStyle = {
   active: {
-    color: '#6fa8dc',
+    color: '#571cb5',
     opacity: 1,
     width: 6,
     outline: {
-      color: '#0b5394',
+      color: '#2e0a45',
       opacity: 1,
       width: 10
     }
   },
   alternate: {
-    color: '#efd3b6',
-    opacity: 0.6,
+    color: '#ffac05',
+    opacity: 1,
     width: 6,
     outline: {
       color: '#da8021',
@@ -266,8 +266,21 @@ var plotRoutes = function() {
     .setHTML(displayDistance(routes[activeIndex]))
     .addTo(map);
 
+  const defaultPadding = 30;
+  var topPadding = 50;
+  var geocoderDivs = document.getElementsByClassName('maplibregl-ctrl-geocoder');
+  for (var i = 0; i < geocoderDivs.length; ++i) {
+    topPadding += geocoderDivs[i].clientHeight;
+  }
+  topPadding += document.getElementsByClassName('logo')[0].clientHeight;
+
   map.fitBounds(routeBounds, {
-    padding: 20
+    padding: {
+      top: topPadding,
+      bottom: defaultPadding,
+      left: defaultPadding,
+      right: defaultPadding
+    }
   });
 
   images.plotAround(map, geojsonLines[activeIndex], start);

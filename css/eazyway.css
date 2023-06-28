@@ -1,7 +1,44 @@
-.maplibregl-ctrl-geocoder{
+#map {
+    width: 100%;
+}
+
+#mjs {
+    flex: 1 1 0%;
+    z-index: 1;
+}
+
+.maplibregl-ctrl-geocoder {
     min-width: 400px;
 }
 
-.maplibregl-ctrl-geocoder .suggestions{
+.maplibregl-ctrl-geocoder .suggestions {
     position: relative;
+}
+
+.logo {
+    width: 220px;
+    height: 70px;
+    background: url('../img/eazyway.svg');
+    background-size: 200px 50px;
+    background-color: white;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.resizer {
+    background-color: #ffffff;
+    cursor: ew-resize;
+    height: 100%;
+    width: 4px;
+    display: flex;
+    align-items: center;
+    z-index: 14;
+}
+
+.separator {
+    width: 20px;
+    height: 10vh;
+    cursor: col-resize;
 }
