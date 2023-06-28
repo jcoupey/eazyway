@@ -36,7 +36,7 @@ const routeStyle = {
 };
 
 var getRouteRequest = function() {
-  var address = 'https://eazyway.verso-optim.com/route/v1/driving/';
+  var address = 'https://demo.eazyway.org/route/v1/driving/';
 
   address += start.lng + ',' + start.lat + ';';
   address += end.lng + ',' + end.lat;
