@@ -8,16 +8,6 @@ var poi = require('./static.js');
 
 var resizer = require('./resizer.js');
 
-map.on('click', function(e) {
-  if (!routing.hasStart()) {
-    routing.setStart(map, e.lngLat, true);
-  } else {
-    if (!routing.hasEnd()) {
-      routing.setEnd(map, e.lngLat, true);
-    }
-  }
-});
-
 class logoControl {
   onAdd(map) {
     this._map = map;
@@ -79,6 +69,8 @@ map.on('load', function () {
   });
 
   map.on('click', 'stadium', function (e) {
+    e.originalEvent.preventDefault();
+
     routing.setEnd(map, poi.stadium.geometry.coordinates, true);
   });
 
@@ -123,9 +115,23 @@ map.on('load', function () {
   });
 
   map.on('click', 'hotels', function (e) {
+    e.originalEvent.preventDefault();
+
     var coordinates = e.features[0].geometry.coordinates.slice();
 
     routing.setStart(map, coordinates, true);
+  });
+
+  map.on('click', function(e) {
+    if(!e.originalEvent.defaultPrevented) {
+      if (!routing.hasStart()) {
+        routing.setStart(map, e.lngLat, true);
+      } else {
+        if (!routing.hasEnd()) {
+          routing.setEnd(map, e.lngLat, true);
+        }
+      }
+    }
   });
 
   map.loadImage('img/danger.png', function(error, image) {
