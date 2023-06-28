@@ -367,10 +367,14 @@ var route = function(m, s, e) {
 };
 
 var reset = function() {
-  cleanRoutes();
+  if (map) {
+    // Otherwise no routing request has been set previously and there
+    // is nothing to clear.
+    cleanRoutes();
 
-  images.resetImagesLayer(map);
-  obstacles.resetObstaclesLayer(map);
+    images.resetImagesLayer(map);
+    obstacles.resetObstaclesLayer(map);
+  }
 };
 
 module.exports = {
