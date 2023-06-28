@@ -164,7 +164,17 @@ map.on('load', function () {
   hideButtons[0].addEventListener('click', () => { routing.reset({start: true, end: false}); });
   hideButtons[1].addEventListener('click', () => { routing.reset({start: false, end: true}); });
 
-  routing.setEnd(map, poi.stadium.geometry.coordinates, true);
+  var urlStart = urlHandler.getLoc('start');
+  if (urlStart) {
+    routing.setStart(map, urlStart, true);
+  }
+
+  var urlEnd = urlHandler.getLoc('end');
+  if (urlEnd) {
+    routing.setEnd(map, urlEnd, true);
+  } else {
+    routing.setEnd(map, poi.stadium.geometry.coordinates, true);
+  }
 });
 
 viewer.init(map);
