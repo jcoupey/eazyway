@@ -17,6 +17,14 @@ python3 scripts/get_mapillary_data.py access_token organization_id
 python3 scripts/get_obstacles.py URL
 ```
 
+### Generate images
+
+```
+mkdir img/obstacles
+python3 scripts/get_obstacles_details.py URL
+
+```
+
 ### Dev server
 
 #### Set custom vector tile style
