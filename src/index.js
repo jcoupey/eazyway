@@ -3,6 +3,7 @@
 var map = require('./config/map.js').map;
 var geocoding = require('./utils/geocoding.js');
 var routing = require('./utils/routing.js');
+var urlHandler = require('./utils/url_handler.js');
 var viewer = require('./utils/viewer.js');
 var poi = require('./static.js');
 
