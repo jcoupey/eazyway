@@ -39,7 +39,7 @@ var plotAround = function(map, geojsonLine) {
     'type': 'symbol',
     'source': 'obstacles',
     'layout': {
-      'icon-image': 'danger',
+      'icon-image': 'wheelchair_danger',
       'icon-overlap': 'always'
     },
     'filter': ['has', 'show']
