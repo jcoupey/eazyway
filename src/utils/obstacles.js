@@ -103,14 +103,6 @@ var plotAround = function(map, geojsonLine) {
               ]
   });
 
-  map.on('mouseenter', 'obstacles', function (e) {
-    map.getCanvas().style.cursor = 'pointer';
-  });
-
-  map.on('mouseleave', 'obstacles', function () {
-    map.getCanvas().style.cursor = '';
-  });
-
   const layers = [
     'wheelchair-danger',
     'wheelchair-problem',
@@ -118,25 +110,53 @@ var plotAround = function(map, geojsonLine) {
     'sight-problem'
   ];
   for (var l = 0; l < layers.length; ++l) {
-    map.on('click', layers[l], function (e) {
-      var coordinates = e.features[0].geometry.coordinates.slice();
-      var html = '<img class="popup-img" src="img/obstacles/' + e.features[0].properties.id + '.jpg">';
-
-      // Ensure that if the map is zoomed out such that multiple
-      // copies of the feature are visible, the popup appears
-      // over the copy being pointed to.
-      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-      }
-
-      popup.setLngLat(coordinates)
-        .setHTML(html)
-        .addTo(map);
+    map.on('mouseenter', layers[l], function (e) {
+      map.getCanvas().style.cursor = 'pointer';
     });
+
+    map.on('mouseleave', layers[l], function () {
+      map.getCanvas().style.cursor = '';
+    });
+
+    map.on('click', layers[l], function (e) {
+      if(!e.originalEvent.defaultPrevented) {
+        e.originalEvent.preventDefault();
+
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var html = '<img class="popup-img" src="img/obstacles/' + e.features[0].properties.id + '.jpg">';
+
+        // Ensure that if the map is zoomed out such that multiple
+        // copies of the feature are visible, the popup appears
+        // over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        popup.setLngLat(coordinates)
+          .setHTML(html)
+          .addTo(map);
+      }
+    });
+  }
+};
+
+var moveLayers = function(map) {
+  if (map.getLayer('wheelchair-danger')) {
+    map.moveLayer('wheelchair-danger');
+  }
+  if (map.getLayer('wheelchair-problem')) {
+    map.moveLayer('wheelchair-problem');
+  }
+  if (map.getLayer('sight-danger')) {
+    map.moveLayer('sight-danger');
+  }
+  if (map.getLayer('sight-problem')) {
+    map.moveLayer('sight-problem');
   }
 };
 
 module.exports = {
   plotAround: plotAround,
-  resetObstaclesLayer: resetObstaclesLayer
+  resetObstaclesLayer: resetObstaclesLayer,
+  moveLayers: moveLayers
 };
