@@ -8,7 +8,7 @@ Frontend prototype for project Eazyway.
 
 ```
 mkdir data
-python3 scripts/get_mapillary_data.py access_token organization_id
+python3 scripts/get_mapillary_data.py access_token organization_id [image_id_blacklist [sequence_id_blacklist]]
 ```
 
 ### Fetch obstacles data
