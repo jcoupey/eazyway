@@ -137,19 +137,19 @@ map.on('load', function () {
 
   map.loadImage('img/wheelchair_danger.png', function(error, image) {
     if (error) throw error;
-    map.addImage('wheelchair_danger', image);
+    map.addImage('wheelchair-danger', image);
   });
   map.loadImage('img/wheelchair_problem.png', function(error, image) {
     if (error) throw error;
-    map.addImage('wheelchair_problem', image);
+    map.addImage('wheelchair-problem', image);
   });
   map.loadImage('img/sight_danger.png', function(error, image) {
     if (error) throw error;
-    map.addImage('sight_danger', image);
+    map.addImage('sight-danger', image);
   });
   map.loadImage('img/sight_problem.png', function(error, image) {
     if (error) throw error;
-    map.addImage('sight_problem', image);
+    map.addImage('sight-problem', image);
   });
 
   var logo = new logoControl();
