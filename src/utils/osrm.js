@@ -285,11 +285,17 @@ var plotRoutes = function() {
 
   // Will register obstacles click events first to ease propagation
   // stopping.
-  obstacles.plotAround(map, geojsonLines[activeIndex]);
+  obstacles.plotAround(map, geojsonLines[activeIndex], 'active');
+  if (hasAlternate) {
+    obstacles.plotAround(map, geojsonLines[1 - activeIndex], 'alternate');
+  }
 
   images.plotAround(map, geojsonLines[activeIndex], start);
 
-  obstacles.moveLayers(map);
+  if (hasAlternate) {
+    obstacles.moveLayers(map, 'alternate');
+  }
+  obstacles.moveLayers(map, 'active');
 
   map.on('click', 'active', function(e) {
     if(!e.originalEvent.defaultPrevented) {
