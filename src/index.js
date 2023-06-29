@@ -176,6 +176,9 @@ map.on('load', function () {
   hideButtons[0].addEventListener('click', () => { routing.reset({start: true, end: false}); });
   hideButtons[1].addEventListener('click', () => { routing.reset({start: false, end: true}); });
 
+  var scale = new maplibregl.ScaleControl();
+  map.addControl(scale);
+
   var urlStart = urlHandler.getLoc('start');
   if (urlStart) {
     routing.setStart(map, urlStart, true);
