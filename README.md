@@ -21,7 +21,8 @@ python3 scripts/get_obstacles.py URL
 
 ```
 mkdir img/obstacles
-python3 scripts/get_obstacles_details.py URL
+mkdir -p audio/obstacles
+python3 scripts/get_obstacles_details.py URL data/obstacles.json
 
 ```
 
