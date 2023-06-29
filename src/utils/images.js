@@ -41,8 +41,6 @@ var plotAround = function(map, geojsonLine, start) {
     }
   }
 
-  resetImagesLayer(map);
-
   map.addSource('mapillary-images', {
     'type': 'geojson',
     'data': images

@@ -240,7 +240,7 @@ var plotRoute = function(name, geojsonLine, style) {
 };
 
 var plotRoutes = function() {
-  cleanRoutes();
+  reset();
 
   var activeIndex = 0;
   var alternateIndex = 1;

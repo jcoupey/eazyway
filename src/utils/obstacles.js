@@ -36,8 +36,6 @@ var plotAround = function(map, geojsonLine) {
     }
   }
 
-  resetObstaclesLayer(map);
-
   map.addSource('obstacles', {
     'type': 'geojson',
     'data': obstacles
