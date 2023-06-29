@@ -31,6 +31,9 @@ var resetObstaclesLayer = function(map) {
 var popup = new maplibregl.Popup().setMaxWidth('400px');
 
 var plotAround = function(map, geojsonLine, slug) {
+  // In case popup from previous routes is still open.
+  popup.remove();
+
   var buffer = turf.buffer(geojsonLine, 0.005);
 
   for (var i = 0; i < obstacles.features.length; i++) {
