@@ -5,9 +5,10 @@ rm bundle.raw.js
 
 rm -rf dist
 
-mkdir -p dist/img
+mkdir -p dist/img/obstacles
 mkdir dist/css
 
+cp -v img/obstacles/*.jpg dist/img/obstacles
 mv -v bundle.js dist
 cp -v img/danger.png dist/img
 cp -v img/eazyway.svg dist/img

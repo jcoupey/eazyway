@@ -283,7 +283,13 @@ var plotRoutes = function() {
     }
   });
 
+  // Will register obstacles click events first to ease propagation
+  // stopping.
+  obstacles.plotAround(map, geojsonLines[activeIndex]);
+
   images.plotAround(map, geojsonLines[activeIndex], start);
+
+  obstacles.moveLayers(map);
 
   map.on('click', 'active', function(e) {
     if(!e.originalEvent.defaultPrevented) {
@@ -316,8 +322,6 @@ var plotRoutes = function() {
       map.getCanvas().style.cursor = '';
     });
   }
-
-  obstacles.plotAround(map, geojsonLines[activeIndex]);
 };
 
 var route = function(m, s, e) {
