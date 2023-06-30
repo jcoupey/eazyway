@@ -13,7 +13,7 @@ var resetImagesLayer = function(map) {
     map.removeSource('mapillary-images');
   }
 
-  viewer.hideMarker();
+  viewer.reset();
 }
 
 var imageIds = [];
