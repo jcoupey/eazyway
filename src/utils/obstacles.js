@@ -88,7 +88,15 @@ var plotAround = function(map, geojsonLine, slug) {
           e.originalEvent.preventDefault();
 
           var coordinates = e.features[0].geometry.coordinates.slice();
-          var html = '<img class="popup-img" src="img/obstacles/' + e.features[0].properties.id + '.jpg">';
+          var id = e.features[0].properties.id;
+          var html = '<img class="popup-img" src="img/obstacles/' + id + '.jpg">';
+          html += '<br>';
+          html += '<audio controls src="audio/obstacles/' + id + '_1.mp3"></audio>'
+
+          if (e.features[0].properties.audio_files === 2) {
+            html += '<br>'
+            html += '<audio controls src="audio/obstacles/' + id + '_2.mp3"></audio>'
+          }
 
           // Ensure that if the map is zoomed out such that multiple
           // copies of the feature are visible, the popup appears
