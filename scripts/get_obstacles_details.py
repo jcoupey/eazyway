@@ -33,17 +33,22 @@ if __name__ == "__main__":
             image.save(image_path)
 
         # Handle audio.
+        audio_files = 0
         if len(full_obstacle["AUDIO1"]) > 0:
+            audio_files += 1
             audio1_path = "audio/obstacles/" + obstacle["properties"]["id"] + "_1.wav"
             print("Writing audio " + audio1_path)
             with open(audio1_path, "wb") as wav_file:
                 wav_file.write(base64.b64decode(full_obstacle["AUDIO1"]))
 
         if len(full_obstacle["AUDIO2"]) > 0:
+            audio_files += 1
             audio2_path = "audio/obstacles/" + obstacle["properties"]["id"] + "_2.wav"
             print("Writing audio " + audio2_path)
             with open(audio2_path, "wb") as wav_file:
                 wav_file.write(base64.b64decode(full_obstacle["AUDIO2"]))
+
+        obstacle["audio_files"] = audio_files
 
     with open("data/obstacles.json", "w") as out:
         json.dump(geojson_obstacles, out)
