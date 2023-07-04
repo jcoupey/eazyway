@@ -10,7 +10,7 @@ mkdir -p dist/audio/obstacles
 mkdir dist/css
 
 cp -v img/obstacles/*.jpg dist/img/obstacles
-cp -v audio/obstacles/*.wav dist/audio/obstacles
+cp -v audio/obstacles/*.mp3 dist/audio/obstacles
 mv -v bundle.js dist
 cp -v img/{sight,wheelchair}_{danger,problem}.png dist/img
 cp -v img/eazyway.svg dist/img

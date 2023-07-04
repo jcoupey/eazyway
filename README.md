@@ -17,13 +17,19 @@ python3 scripts/get_mapillary_data.py access_token organization_id [image_id_bla
 python3 scripts/get_obstacles.py URL
 ```
 
-### Generate images
+### Generate images and audio files
 
 ```
 mkdir img/obstacles
 mkdir -p audio/obstacles
 python3 scripts/get_obstacles_details.py URL data/obstacles.json
+```
 
+### Convert audio files to mp3
+
+```
+cd audio/obstacles
+for f in *.wav; do ffmpeg -i $f -vn -ar 44100 -ac 2 -b:a 128k ${f%.wav}.mp3; done
 ```
 
 ### Dev server
