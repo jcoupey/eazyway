@@ -80,17 +80,18 @@ map.on('load', function () {
     'data': poi.hotels
   });
 
+  map.loadImage('img/hotel.png', function(error, image) {
+    if (error) throw error;
+    map.addImage('hotel', image);
+  });
+
   map.addLayer({
     'id': 'hotels',
-    'type': 'circle',
+    'type': 'symbol',
     'source': 'hotels',
-    'paint': {
-      'circle-stroke-color': 'black',
-      'circle-stroke-width': 1,
-      'circle-stroke-opacity': 1,
-      'circle-radius': 8,
-      'circle-color': '#ffac05',
-      'circle-opacity': 0.7
+    'layout': {
+      'icon-image': 'hotel',
+      'icon-overlap': 'always'
     }
   });
 
