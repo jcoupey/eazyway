@@ -28,7 +28,7 @@ var resetObstaclesLayer = function(map) {
   }
 }
 
-var popup = new maplibregl.Popup().setMaxWidth('400px');
+var popup = new maplibregl.Popup().setMaxWidth('500px');
 
 var plotAround = function(map, geojsonLine, slug) {
   // In case popup from previous routes is still open.
@@ -89,7 +89,7 @@ var plotAround = function(map, geojsonLine, slug) {
 
           var coordinates = e.features[0].geometry.coordinates.slice();
           var id = e.features[0].properties.id;
-          var html = '<img class="popup-img" src="img/obstacles/' + id + '.jpg">';
+          var html = '<div  class="popup-img" style="background: url(img/obstacles/' + id + '.jpg); background-size: cover; background-position: center center;"></div>';
           html += '<br>';
           html += '<audio controls src="audio/obstacles/' + id + '_1.mp3"></audio>'
 
