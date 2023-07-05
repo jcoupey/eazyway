@@ -164,6 +164,7 @@ var routes = [];
 var geojsonLines = [];
 var routeBounds;
 var distancePopup;
+var alternateDistancePopup;
 
 var displayDistance = function(route) {
   var distance = route.distance;
@@ -184,6 +185,9 @@ const routeNames = ['active', 'alternate'];
 var cleanRoutes = function() {
   if (distancePopup) {
     distancePopup.remove();
+  }
+  if (alternateDistancePopup) {
+    alternateDistancePopup.remove();
   }
 
   removeLayerAndSource('start');
@@ -255,6 +259,11 @@ var plotRoutes = function() {
     plotRoute('alternate',
               geojsonLines[alternateIndex],
               routeStyle.alternate);
+
+    alternateDistancePopup = new maplibregl.Popup()
+      .setLngLat(middlePoint(geojsonLines[alternateIndex]))
+      .setHTML(displayDistance(routes[alternateIndex]))
+      .addTo(map);
   }
 
   plotRoute('active',
