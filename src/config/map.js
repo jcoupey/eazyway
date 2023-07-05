@@ -4,8 +4,8 @@ const style = require('./style.js');
 
 var map = new maplibregl.Map({
   container: 'map', // container id
-  center: [2.34621, 48.81598], // starting position
-  zoom: 13 // starting zoom
+  center: [2.34, 48.82], // starting position
+  zoom: 14 // starting zoom
 });
 
 style.set(map);
