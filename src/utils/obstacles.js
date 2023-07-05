@@ -108,6 +108,9 @@ var plotAround = function(map, geojsonLine, slug) {
           popup.setLngLat(coordinates)
             .setHTML(html)
             .addTo(map);
+
+          var button = popup._content.children[popup._content.children.length - 1];
+          button.classList.add('obstacles-popup-close-button');
         }
       });
     }
