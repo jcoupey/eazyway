@@ -29,10 +29,10 @@ def get_level(o):
 
 def get_type(o):
     if o["TYPE"][1]:
-        current_type = "sight"
+        current_type = "wheelchair"
     else:
         assert o["TYPE"][2]
-        current_type = "wheelchair"
+        current_type = "sight"
 
     return current_type
 
