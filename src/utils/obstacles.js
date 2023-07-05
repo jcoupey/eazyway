@@ -28,7 +28,7 @@ var resetObstaclesLayer = function(map) {
   }
 }
 
-var popup = new maplibregl.Popup().setMaxWidth('500px');
+var popup = new maplibregl.Popup().setMaxWidth('550px');
 
 var plotAround = function(map, geojsonLine, slug) {
   // In case popup from previous routes is still open.
