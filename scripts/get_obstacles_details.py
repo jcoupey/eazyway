@@ -48,7 +48,7 @@ if __name__ == "__main__":
             with open(audio2_path, "wb") as wav_file:
                 wav_file.write(base64.b64decode(full_obstacle["AUDIO2"]))
 
-        obstacle["audio_files"] = audio_files
+        obstacle["properties"]["audio_files"] = audio_files
 
     with open("data/obstacles.json", "w") as out:
         json.dump(geojson_obstacles, out)
