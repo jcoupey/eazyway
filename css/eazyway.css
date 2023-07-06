@@ -56,3 +56,11 @@
 .obstacles-popup-close-button:hover {
     background-color: white;
 }
+
+.active-distance {
+    color: #571cb5;
+}
+
+.alternate-distance {
+    color: #da8021;
+}

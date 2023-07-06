@@ -260,7 +260,7 @@ var plotRoutes = function() {
               geojsonLines[alternateIndex],
               routeStyle.alternate);
 
-    alternateDistancePopup = new maplibregl.Popup()
+    alternateDistancePopup = new maplibregl.Popup({className: 'alternate-distance'})
       .setLngLat(middlePoint(geojsonLines[alternateIndex]))
       .setHTML(displayDistance(routes[alternateIndex]))
       .addTo(map);
@@ -270,7 +270,7 @@ var plotRoutes = function() {
             geojsonLines[activeIndex],
             routeStyle.active);
 
-  distancePopup = new maplibregl.Popup()
+  distancePopup = new maplibregl.Popup({className: 'active-distance'})
     .setLngLat(middlePoint(geojsonLines[activeIndex]))
     .setHTML(displayDistance(routes[activeIndex]))
     .addTo(map);
