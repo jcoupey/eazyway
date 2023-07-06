@@ -180,6 +180,39 @@ var displayDistance = function(route) {
   return distanceStr;
 };
 
+var differentCoords = function(a, b) {
+  return (a[0] != b[0]) || (a[1] != b[1]);
+};
+
+var placePopups = function(activeIndex) {
+  var activeCoords = geojsonLines[activeIndex].geometry.coordinates;
+  var alternateCoords = geojsonLines[1 - activeIndex].geometry.coordinates;
+
+  const activeLength = activeCoords.length;
+  const alternateLength = alternateCoords.length;
+
+  var firstDifference = 0;
+  for (var i = 0; i < Math.min(activeLength, alternateLength); ++i) {
+    if (differentCoords(activeCoords[i], alternateCoords[i])) {
+      firstDifference = i;
+      break;
+    }
+  }
+
+  var lastDifference = 0;
+  for (var i = 0; i < Math.min(activeLength, alternateLength); ++i) {
+    if (differentCoords(activeCoords[activeLength - i - 1], alternateCoords[alternateLength - i - 1])) {
+      lastDifference = i;
+      break;
+    }
+  }
+
+  return {
+    active: activeCoords[Math.round((firstDifference + activeLength - lastDifference - 1) / 2)],
+    alternate: alternateCoords[Math.round((firstDifference + alternateLength - lastDifference - 1) / 2)]
+  }
+};
+
 const routeNames = ['active', 'alternate'];
 
 var cleanRoutes = function() {
@@ -255,13 +288,18 @@ var plotRoutes = function() {
     alternateIndex = 0;
   }
 
+  var activePopupCoords = middlePoint(geojsonLines[activeIndex]);
+
   if (hasAlternate) {
     plotRoute('alternate',
               geojsonLines[alternateIndex],
               routeStyle.alternate);
 
+    var popupCoords = placePopups(activeIndex);
+    activePopupCoords = popupCoords.active;
+
     alternateDistancePopup = new maplibregl.Popup({className: 'alternate-distance'})
-      .setLngLat(middlePoint(geojsonLines[alternateIndex]))
+      .setLngLat(popupCoords.alternate)
       .setHTML(displayDistance(routes[alternateIndex]))
       .addTo(map);
   }
@@ -271,7 +309,7 @@ var plotRoutes = function() {
             routeStyle.active);
 
   distancePopup = new maplibregl.Popup({className: 'active-distance'})
-    .setLngLat(middlePoint(geojsonLines[activeIndex]))
+    .setLngLat(activePopupCoords)
     .setHTML(displayDistance(routes[activeIndex]))
     .addTo(map);
 
