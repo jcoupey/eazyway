@@ -90,12 +90,15 @@ var plotAround = function(map, geojsonLine, slug) {
           var coordinates = e.features[0].geometry.coordinates.slice();
           var id = e.features[0].properties.id;
           var html = '<div  class="popup-img" style="background: url(img/obstacles/' + id + '.jpg); background-size: cover; background-position: center center;"></div>';
-          html += '<br>';
-          html += '<audio controls src="audio/obstacles/' + id + '_1.mp3"></audio>'
 
-          if (e.features[0].properties.audio_files === 2) {
-            html += '<br>'
-            html += '<audio controls src="audio/obstacles/' + id + '_2.mp3"></audio>'
+          if (e.features[0].properties.audio_files > 0) {
+            html += '<br>';
+            html += '<audio controls src="audio/obstacles/' + id + '_1.mp3"></audio>'
+
+            if (e.features[0].properties.audio_files > 1) {
+              html += '<br>'
+              html += '<audio controls src="audio/obstacles/' + id + '_2.mp3"></audio>'
+            }
           }
 
           // Ensure that if the map is zoomed out such that multiple
