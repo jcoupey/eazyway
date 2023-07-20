@@ -9,8 +9,18 @@ var mjs;
 
 var imageMarker;
 
+var firstImageLoad = true;
+
 var updateMarker = function(img) {
-  imageMarker.setLngLat([img.originalLngLat.lng, img.originalLngLat.lat]);
+  var coords = [img.originalLngLat.lng, img.originalLngLat.lat];
+
+  if(!firstImageLoad) {
+    map.easeTo({
+      center: coords
+    });
+  }
+
+  imageMarker.setLngLat(coords);
   imageMarker.addTo(map);
 };
 
@@ -37,6 +47,7 @@ var init = function(m) {
   mjs.on("image", function() {
     mjs.getImage().then(function(img) {
       updateMarker(img);
+      firstImageLoad = false;
     });
   });
 
@@ -59,8 +70,9 @@ var filterImages = function(ids) {
   mjs.setFilter(['in', 'id', ...ids]);
 };
 
-var hideMarker = function() {
+var reset = function() {
   imageMarker.remove();
+  firstImageLoad = true;
 };
 
 var resize = function() {
@@ -72,7 +84,7 @@ var resize = function() {
 module.exports = {
   init: init,
   filterImages: filterImages,
-  hideMarker: hideMarker,
+  reset: reset,
   resize: resize,
   setCurrentImage: setCurrentImage
 };

@@ -13,7 +13,7 @@ var resetImagesLayer = function(map) {
     map.removeSource('mapillary-images');
   }
 
-  viewer.hideMarker();
+  viewer.reset();
 }
 
 var imageIds = [];
@@ -40,8 +40,6 @@ var plotAround = function(map, geojsonLine, start) {
       delete f.properties.show;
     }
   }
-
-  resetImagesLayer(map);
 
   map.addSource('mapillary-images', {
     'type': 'geojson',

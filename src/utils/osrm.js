@@ -164,6 +164,7 @@ var routes = [];
 var geojsonLines = [];
 var routeBounds;
 var distancePopup;
+var alternateDistancePopup;
 
 var displayDistance = function(route) {
   var distance = route.distance;
@@ -179,11 +180,47 @@ var displayDistance = function(route) {
   return distanceStr;
 };
 
+var differentCoords = function(a, b) {
+  return (a[0] != b[0]) || (a[1] != b[1]);
+};
+
+var placePopups = function(activeIndex) {
+  var activeCoords = geojsonLines[activeIndex].geometry.coordinates;
+  var alternateCoords = geojsonLines[1 - activeIndex].geometry.coordinates;
+
+  const activeLength = activeCoords.length;
+  const alternateLength = alternateCoords.length;
+
+  var firstDifference = 0;
+  for (var i = 0; i < Math.min(activeLength, alternateLength); ++i) {
+    if (differentCoords(activeCoords[i], alternateCoords[i])) {
+      firstDifference = i;
+      break;
+    }
+  }
+
+  var lastDifference = 0;
+  for (var i = 0; i < Math.min(activeLength, alternateLength); ++i) {
+    if (differentCoords(activeCoords[activeLength - i - 1], alternateCoords[alternateLength - i - 1])) {
+      lastDifference = i;
+      break;
+    }
+  }
+
+  return {
+    active: activeCoords[Math.round((firstDifference + activeLength - lastDifference - 1) / 2)],
+    alternate: alternateCoords[Math.round((firstDifference + alternateLength - lastDifference - 1) / 2)]
+  }
+};
+
 const routeNames = ['active', 'alternate'];
 
 var cleanRoutes = function() {
   if (distancePopup) {
     distancePopup.remove();
+  }
+  if (alternateDistancePopup) {
+    alternateDistancePopup.remove();
   }
 
   removeLayerAndSource('start');
@@ -240,7 +277,7 @@ var plotRoute = function(name, geojsonLine, style) {
 };
 
 var plotRoutes = function() {
-  cleanRoutes();
+  reset();
 
   var activeIndex = 0;
   var alternateIndex = 1;
@@ -251,18 +288,28 @@ var plotRoutes = function() {
     alternateIndex = 0;
   }
 
+  var activePopupCoords = middlePoint(geojsonLines[activeIndex]);
+
   if (hasAlternate) {
     plotRoute('alternate',
               geojsonLines[alternateIndex],
               routeStyle.alternate);
+
+    var popupCoords = placePopups(activeIndex);
+    activePopupCoords = popupCoords.active;
+
+    alternateDistancePopup = new maplibregl.Popup({className: 'alternate-distance'})
+      .setLngLat(popupCoords.alternate)
+      .setHTML(displayDistance(routes[alternateIndex]))
+      .addTo(map);
   }
 
   plotRoute('active',
             geojsonLines[activeIndex],
             routeStyle.active);
 
-  distancePopup = new maplibregl.Popup()
-    .setLngLat(middlePoint(geojsonLines[activeIndex]))
+  distancePopup = new maplibregl.Popup({className: 'active-distance'})
+    .setLngLat(activePopupCoords)
     .setHTML(displayDistance(routes[activeIndex]))
     .addTo(map);
 
@@ -283,7 +330,19 @@ var plotRoutes = function() {
     }
   });
 
+  // Will register obstacles click events first to ease propagation
+  // stopping.
+  obstacles.plotAround(map, geojsonLines[activeIndex], 'active');
+  if (hasAlternate) {
+    obstacles.plotAround(map, geojsonLines[1 - activeIndex], 'alternate');
+  }
+
   images.plotAround(map, geojsonLines[activeIndex], start);
+
+  if (hasAlternate) {
+    obstacles.moveLayers(map, 'alternate');
+  }
+  obstacles.moveLayers(map, 'active');
 
   map.on('click', 'active', function(e) {
     if(!e.originalEvent.defaultPrevented) {
@@ -316,8 +375,6 @@ var plotRoutes = function() {
       map.getCanvas().style.cursor = '';
     });
   }
-
-  obstacles.plotAround(map, geojsonLines[activeIndex]);
 };
 
 var route = function(m, s, e) {

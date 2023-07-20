@@ -19,10 +19,28 @@ def bbox_ok(o):
     )
 
 
+def level_ok(o):
+    return o["GENE"] == 3 or o["GENE"] == 4
+
+
+def get_level(o):
+    return "problem" if (o["GENE"] == 3) else "danger"
+
+
+def get_type(o):
+    if o["TYPE"][1]:
+        current_type = "wheelchair"
+    else:
+        assert o["TYPE"][2]
+        current_type = "sight"
+
+    return current_type
+
+
 if __name__ == "__main__":
     obstacles_URL = sys.argv[1]
 
-    obstacles = [o for o in get_obstacles(obstacles_URL) if bbox_ok(o)]
+    obstacles = [o for o in get_obstacles(obstacles_URL) if bbox_ok(o) and level_ok(o)]
 
     geojson_obstacles = {
         "type": "FeatureCollection",
@@ -33,7 +51,11 @@ if __name__ == "__main__":
                     "type": "Point",
                     "coordinates": [o["LONGITUDE"], o["LATITUDE"]],
                 },
-                "properties": {"id": o["IDRELEVE"]},
+                "properties": {
+                    "id": o["IDRELEVE"],
+                    "level": get_level(o),
+                    "type": get_type(o),
+                },
             }
             for o in obstacles
         ],

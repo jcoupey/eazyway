@@ -80,17 +80,18 @@ map.on('load', function () {
     'data': poi.hotels
   });
 
+  map.loadImage('img/hotel.png', function(error, image) {
+    if (error) throw error;
+    map.addImage('hotel', image);
+  });
+
   map.addLayer({
     'id': 'hotels',
-    'type': 'circle',
+    'type': 'symbol',
     'source': 'hotels',
-    'paint': {
-      'circle-stroke-color': 'black',
-      'circle-stroke-width': 1,
-      'circle-stroke-opacity': 1,
-      'circle-radius': 8,
-      'circle-color': '#ffac05',
-      'circle-opacity': 0.7
+    'layout': {
+      'icon-image': 'hotel',
+      'icon-overlap': 'always'
     }
   });
 
@@ -135,9 +136,21 @@ map.on('load', function () {
     }
   });
 
-  map.loadImage('img/danger.png', function(error, image) {
+  map.loadImage('img/wheelchair_danger.png', function(error, image) {
     if (error) throw error;
-    map.addImage('danger', image);
+    map.addImage('wheelchair-danger', image);
+  });
+  map.loadImage('img/wheelchair_problem.png', function(error, image) {
+    if (error) throw error;
+    map.addImage('wheelchair-problem', image);
+  });
+  map.loadImage('img/sight_danger.png', function(error, image) {
+    if (error) throw error;
+    map.addImage('sight-danger', image);
+  });
+  map.loadImage('img/sight_problem.png', function(error, image) {
+    if (error) throw error;
+    map.addImage('sight-problem', image);
   });
 
   var logo = new logoControl();
@@ -163,6 +176,9 @@ map.on('load', function () {
   var hideButtons = document.getElementsByClassName('maplibregl-ctrl-geocoder--button');
   hideButtons[0].addEventListener('click', () => { routing.reset({start: true, end: false}); });
   hideButtons[1].addEventListener('click', () => { routing.reset({start: false, end: true}); });
+
+  var scale = new maplibregl.ScaleControl();
+  map.addControl(scale);
 
   var urlStart = urlHandler.getLoc('start');
   if (urlStart) {
